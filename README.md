@@ -7,6 +7,7 @@ Nuxt 3 + Tailwind CSS app for rating Taylor Swift albums with friends. The first
 ```bash
 npm install
 npm run dev
+npm run typecheck
 ```
 
 ## Environment
@@ -42,4 +43,20 @@ NUXT_PUBLIC_SUPABASE_URL
 NUXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 ```
 
-The current UI works with local mock data first. Supabase migrations and seed data live in `supabase/`.
+## Supabase Setup
+
+Run the SQL files in this order from the Supabase SQL editor:
+
+```text
+supabase/migrations/0001_init.sql
+supabase/migrations/0002_rls_policies.sql
+supabase/seed.sql
+```
+
+Then enable anonymous sign-ins:
+
+```text
+Authentication > Sign In / Providers > Anonymous sign-ins
+```
+
+The app uses Supabase when the public URL/key are available and the tables are seeded. If Supabase is missing or not ready, it falls back to browser-local ratings so the UI still works.

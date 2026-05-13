@@ -30,11 +30,16 @@
           <button
             type="submit"
             class="focus-ring inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-starlight px-5 font-semibold text-midnight-950 transition hover:bg-white"
+            :disabled="loading"
           >
-            <PenLine class="size-4" />
-            开始打分
+            <Loader2 v-if="loading" class="size-4 animate-spin" />
+            <PenLine v-else class="size-4" />
+            {{ loading ? '进入中' : '开始打分' }}
           </button>
         </div>
+        <p class="mt-3 text-xs leading-5" :class="status.mode === 'error' ? 'text-aurora-rose' : 'text-silver'">
+          {{ status.message }}
+        </p>
       </form>
 
       <div class="flex flex-wrap gap-3 text-sm text-silver">
@@ -74,12 +79,13 @@
 </template>
 
 <script setup lang="ts">
-import { Moon, PenLine } from 'lucide-vue-next'
+import { Loader2, Moon, PenLine } from 'lucide-vue-next'
 import { MIDNIGHTS_ALBUM as album } from '~/lib/constants'
 
 const { user, saveUser, loadUser } = useCurrentUser()
+const { syncUser, status, loading } = useRemoteRatings()
 const nickname = ref('')
-const coverSrc = usePublicAsset('/images/midnights-cover.svg')
+const coverSrc = usePublicAsset('/images/midnights-cover.jpg')
 
 onMounted(() => {
   loadUser()
@@ -92,7 +98,12 @@ async function enterRating() {
     return
   }
 
-  saveUser(cleanNickname)
+  try {
+    await syncUser(cleanNickname)
+  } catch {
+    saveUser(cleanNickname)
+  }
+
   await navigateTo('/rate')
 }
 </script>

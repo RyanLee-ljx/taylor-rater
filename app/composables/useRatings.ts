@@ -81,6 +81,24 @@ export function useRatings() {
     persist()
   }
 
+  function replaceRatings(nextDrafts: Record<string, RatingDraft>, nextSubmittedAt?: string | null) {
+    drafts.value = {
+      ...createInitialDrafts(),
+      ...nextDrafts
+    }
+
+    if (nextSubmittedAt !== undefined) {
+      submittedAt.value = nextSubmittedAt
+    }
+
+    persist()
+  }
+
+  function markSubmitted(value = new Date().toISOString()) {
+    submittedAt.value = value
+    persist()
+  }
+
   function resetRatings() {
     drafts.value = createInitialDrafts()
     submittedAt.value = null
@@ -106,6 +124,8 @@ export function useRatings() {
     loadRatings,
     updateRating,
     submitRatings,
+    replaceRatings,
+    markSubmitted,
     resetRatings
   }
 }

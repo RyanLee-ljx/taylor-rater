@@ -8,7 +8,11 @@
       <MessageSquare class="mt-1 size-5 text-aurora-gold" />
     </div>
 
-    <div class="mt-5 space-y-3">
+    <div v-if="reviews.length === 0" class="mt-5 rounded-lg border border-white/10 bg-white/[0.06] p-4 text-sm text-silver">
+      这首歌暂时还没有短评。
+    </div>
+
+    <div v-else class="mt-5 space-y-3">
       <article
         v-for="review in reviews"
         :key="review.id"

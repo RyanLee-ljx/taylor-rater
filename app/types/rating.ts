@@ -1,5 +1,7 @@
 export interface Track {
   id: string
+  databaseId?: string
+  albumId?: string
   albumSlug: string
   trackNo: number
   title: string
@@ -19,9 +21,12 @@ export interface RatingDraft {
 
 export interface CurrentUser {
   id: string
+  albumId?: string
+  authUid?: string
   nickname: string
   avatarColor: string
   createdAt: string
+  isRemote?: boolean
 }
 
 export interface Review {
@@ -40,4 +45,9 @@ export interface LeaderboardRow extends Track {
   ratingCount: number
   position: number
   label: '仙品' | '✨ 仙乐' | null
+}
+
+export interface DataStatus {
+  mode: 'checking' | 'remote' | 'local' | 'error'
+  message: string
 }

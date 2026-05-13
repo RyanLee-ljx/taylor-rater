@@ -6,6 +6,7 @@ dist
 .env
 .env.*
 !.env.example
+/cover.jpg
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

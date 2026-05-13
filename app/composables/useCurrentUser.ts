@@ -23,19 +23,7 @@ export function useCurrentUser() {
     ready.value = true
   }
 
-  function saveUser(nickname: string) {
-    const cleanNickname = nickname.trim().slice(0, 24)
-    if (!cleanNickname) {
-      throw new Error('Nickname is required.')
-    }
-
-    const nextUser: CurrentUser = {
-      id: user.value?.id || createGuestId(),
-      nickname: cleanNickname,
-      avatarColor: user.value?.avatarColor || pickAvatarColor(cleanNickname),
-      createdAt: user.value?.createdAt || new Date().toISOString()
-    }
-
+  function persistUser(nextUser: CurrentUser) {
     user.value = nextUser
 
     if (import.meta.client) {
@@ -43,6 +31,29 @@ export function useCurrentUser() {
     }
 
     return nextUser
+  }
+
+  function saveUser(nickname: string, overrides: Partial<CurrentUser> = {}) {
+    const cleanNickname = nickname.trim().slice(0, 24)
+    if (!cleanNickname) {
+      throw new Error('Nickname is required.')
+    }
+
+    const nextUser: CurrentUser = {
+      id: overrides.id || user.value?.id || createGuestId(),
+      albumId: overrides.albumId ?? user.value?.albumId,
+      authUid: overrides.authUid ?? user.value?.authUid,
+      nickname: cleanNickname,
+      avatarColor: overrides.avatarColor || user.value?.avatarColor || pickAvatarColor(cleanNickname),
+      createdAt: overrides.createdAt || user.value?.createdAt || new Date().toISOString(),
+      isRemote: overrides.isRemote ?? user.value?.isRemote
+    }
+
+    return persistUser(nextUser)
+  }
+
+  function setUser(nextUser: CurrentUser) {
+    return persistUser(nextUser)
   }
 
   function clearUser() {
@@ -59,6 +70,7 @@ export function useCurrentUser() {
     ready,
     loadUser,
     saveUser,
+    setUser,
     clearUser
   }
 }

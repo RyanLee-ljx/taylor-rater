@@ -24,13 +24,25 @@
           maxlength="24"
           placeholder="你的昵称"
         >
-        <button class="focus-ring min-h-12 rounded-lg bg-starlight px-5 font-semibold text-midnight-950 transition hover:bg-white" type="submit">
-          继续
+        <button
+          class="focus-ring inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-starlight px-5 font-semibold text-midnight-950 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+          type="submit"
+          :disabled="remoteLoading"
+        >
+          <Loader2 v-if="remoteLoading" class="size-4 animate-spin" />
+          {{ remoteLoading ? '同步中' : '继续' }}
         </button>
       </form>
     </section>
 
     <template v-else>
+      <section
+        class="rounded-lg border px-4 py-3 text-sm"
+        :class="status.mode === 'error' ? 'border-aurora-rose/30 bg-aurora-rose/10 text-aurora-rose' : 'border-white/10 bg-white/8 text-silver'"
+      >
+        {{ status.message }}
+      </section>
+
       <RatingProgress :completed="completedCount" :total="tracks.length" />
 
       <div class="grid gap-4 lg:grid-cols-2">
@@ -39,7 +51,7 @@
           :key="track.id"
           :track="track"
           :rating="drafts[track.id]"
-          @update:rating="(nextRating) => updateRating(track.id, nextRating)"
+          @update:rating="updateTrackRating(track.id, $event as RatingDraft)"
         />
       </div>
 
@@ -63,11 +75,12 @@
             <button
               type="button"
               class="focus-ring inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-starlight px-5 text-sm font-semibold text-midnight-950 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-45 sm:flex-none"
-              :disabled="!canSubmit"
+              :disabled="!canSubmit || remoteLoading"
               @click="submit"
             >
-              <Send class="size-4" />
-              提交评分
+              <Loader2 v-if="remoteLoading" class="size-4 animate-spin" />
+              <Send v-else class="size-4" />
+              {{ remoteLoading ? '提交中' : '提交评分' }}
             </button>
           </div>
         </div>
@@ -77,25 +90,52 @@
 </template>
 
 <script setup lang="ts">
-import { BarChart3, RotateCcw, Send } from 'lucide-vue-next'
+import { BarChart3, Loader2, RotateCcw, Send } from 'lucide-vue-next'
 import { MIDNIGHTS_TRACKS as tracks } from '~/lib/constants'
+import type { RatingDraft } from '~/types/rating'
 
 const { user, saveUser, loadUser } = useCurrentUser()
-const { drafts, completedCount, canSubmit, updateRating, submitRatings, resetRatings, loadRatings } = useRatings()
+const {
+  drafts,
+  completedCount,
+  canSubmit,
+  updateRating,
+  submitRatings,
+  resetRatings,
+  loadRatings,
+  replaceRatings,
+  markSubmitted
+} = useRatings()
+const { status, loading: remoteLoading, syncUser, loadUserRatings, submitRemoteRatings } = useRemoteRatings()
 const nickname = ref('')
 
-onMounted(() => {
+onMounted(async () => {
   loadUser()
   loadRatings()
   nickname.value = user.value?.nickname || ''
+
+  if (user.value?.isRemote) {
+    const remoteDrafts = await loadUserRatings(user.value)
+    if (remoteDrafts) {
+      replaceRatings(remoteDrafts)
+    }
+  }
 })
 
-function createUser() {
+async function createUser() {
   if (!nickname.value.trim()) {
     return
   }
 
-  saveUser(nickname.value)
+  try {
+    await syncUser(nickname.value)
+  } catch {
+    saveUser(nickname.value)
+  }
+}
+
+function updateTrackRating(trackId: string, nextRating: RatingDraft) {
+  updateRating(trackId, nextRating)
 }
 
 async function submit() {
@@ -103,7 +143,18 @@ async function submit() {
     return
   }
 
-  submitRatings(user.value)
+  let currentUser = user.value
+  if (!currentUser.isRemote) {
+    currentUser = await syncUser(currentUser.nickname)
+  }
+
+  const result = await submitRemoteRatings(currentUser, drafts.value)
+  if (result.ok && result.submittedAt) {
+    markSubmitted(result.submittedAt)
+  } else {
+    submitRatings(currentUser)
+  }
+
   await navigateTo('/results')
 }
 </script>
