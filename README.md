@@ -1,6 +1,6 @@
 # Taylor Rater
 
-Nuxt 3 + Tailwind CSS app for rating Taylor Swift albums with friends. The first album flow is `Midnights`, including the 13 standard tracks plus `Hits Different`.
+Nuxt 3 + Tailwind CSS app for rating Taylor Swift albums with friends. The first album flow is `Midnights`, including the 13 standard tracks, the 3am Tracks, and `Hits Different`.
 
 ## Local Development
 

@@ -141,9 +141,79 @@ export const MIDNIGHTS_TRACKS: Track[] = [
     mood: '收束告白'
   },
   {
-    id: 'hits-different',
+    id: 'the-great-war',
     albumSlug: 'midnights',
     trackNo: 14,
+    title: 'The Great War',
+    edition: 'extra',
+    isBonus: true,
+    duration: '4:00',
+    mood: '战后回望'
+  },
+  {
+    id: 'bigger-than-the-whole-sky',
+    albumSlug: 'midnights',
+    trackNo: 15,
+    title: 'Bigger Than The Whole Sky',
+    edition: 'extra',
+    isBonus: true,
+    duration: '3:38',
+    mood: '空旷哀悼'
+  },
+  {
+    id: 'paris',
+    albumSlug: 'midnights',
+    trackNo: 16,
+    title: 'Paris',
+    edition: 'extra',
+    isBonus: true,
+    duration: '3:16',
+    mood: '粉色逃离'
+  },
+  {
+    id: 'high-infidelity',
+    albumSlug: 'midnights',
+    trackNo: 17,
+    title: 'High Infidelity',
+    edition: 'extra',
+    isBonus: true,
+    duration: '3:51',
+    mood: '隐秘裂痕'
+  },
+  {
+    id: 'glitch',
+    albumSlug: 'midnights',
+    trackNo: 18,
+    title: 'Glitch',
+    edition: 'extra',
+    isBonus: true,
+    duration: '2:28',
+    mood: '电流暧昧'
+  },
+  {
+    id: 'wouldve-couldve-shouldve',
+    albumSlug: 'midnights',
+    trackNo: 19,
+    title: "Would've Could've, Should've",
+    edition: 'extra',
+    isBonus: true,
+    duration: '4:20',
+    mood: '深夜清算'
+  },
+  {
+    id: 'dear-reader',
+    albumSlug: 'midnights',
+    trackNo: 20,
+    title: 'Dear Reader',
+    edition: 'extra',
+    isBonus: true,
+    duration: '3:45',
+    mood: '尾声独白'
+  },
+  {
+    id: 'hits-different',
+    albumSlug: 'midnights',
+    trackNo: 21,
     title: 'Hits Different',
     edition: 'extra',
     isBonus: true,
@@ -173,6 +243,13 @@ const baseScores: Record<string, number> = {
   karma: 8.4,
   'sweet-nothing': 8.1,
   mastermind: 8.2,
+  'the-great-war': 8.9,
+  'bigger-than-the-whole-sky': 8.6,
+  paris: 7.9,
+  'high-infidelity': 8.4,
+  glitch: 7.7,
+  'wouldve-couldve-shouldve': 9.3,
+  'dear-reader': 8.5,
   'hits-different': 9.1
 }
 

@@ -46,7 +46,9 @@
         <NuxtLink class="focus-ring rounded-full border border-white/10 bg-white/8 px-4 py-2 transition hover:text-white" to="/results">
           先看榜单
         </NuxtLink>
-        <span class="rounded-full border border-white/10 bg-white/8 px-4 py-2">14 tracks including Hits Different</span>
+        <span class="rounded-full border border-white/10 bg-white/8 px-4 py-2">
+          {{ tracks.length }} tracks including 3am Tracks
+        </span>
       </div>
     </section>
 
@@ -61,7 +63,7 @@
         </div>
         <div class="mt-4 grid grid-cols-3 gap-3 text-center text-sm text-silver">
           <div class="rounded-lg border border-white/10 bg-white/8 px-3 py-3">
-            <p class="font-display text-2xl text-white">14</p>
+            <p class="font-display text-2xl text-white">{{ tracks.length }}</p>
             <p>曲目</p>
           </div>
           <div class="rounded-lg border border-white/10 bg-white/8 px-3 py-3">
@@ -80,7 +82,7 @@
 
 <script setup lang="ts">
 import { Loader2, Moon, PenLine } from 'lucide-vue-next'
-import { MIDNIGHTS_ALBUM as album } from '~/lib/constants'
+import { MIDNIGHTS_ALBUM as album, MIDNIGHTS_TRACKS as tracks } from '~/lib/constants'
 
 const { user, saveUser, loadUser } = useCurrentUser()
 const { syncUser, status, loading } = useRemoteRatings()

@@ -130,7 +130,17 @@ export function useRemoteRatings() {
     if (tracksError || !trackRows?.length) {
       status.value = {
         mode: 'error',
-        message: 'Supabase 已连接，但曲目表为空。请确认 tracks 表已插入 14 首 Midnights 曲目。'
+        message: `Supabase 已连接，但曲目表为空。请确认 tracks 表已插入 ${MIDNIGHTS_TRACKS.length} 首 Midnights 曲目。`
+      }
+      return null
+    }
+
+    const remoteTitles = new Set(trackRows.map((track) => track.title.toLowerCase()))
+    const missingTracks = MIDNIGHTS_TRACKS.filter((track) => !remoteTitles.has(track.title.toLowerCase()))
+    if (missingTracks.length > 0) {
+      status.value = {
+        mode: 'error',
+        message: `Supabase 曲目表还缺 ${missingTracks.length} 首：${missingTracks.map((track) => track.title).join('、')}。请重新执行 supabase/seed.sql。`
       }
       return null
     }

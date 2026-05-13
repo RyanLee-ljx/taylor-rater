@@ -16,6 +16,19 @@ set
 with album as (
   select id from public.albums where slug = 'midnights'
 )
+update public.tracks t
+set
+  track_no = 21,
+  duration_seconds = 234,
+  edition = 'extra',
+  is_bonus = true
+from album
+where t.album_id = album.id
+  and t.title = 'Hits Different';
+
+with album as (
+  select id from public.albums where slug = 'midnights'
+)
 insert into public.tracks (album_id, track_no, title, duration_seconds, edition, is_bonus)
 select
   album.id,
@@ -39,7 +52,14 @@ from album,
   (11, 'Karma', 204, 'standard', false),
   (12, 'Sweet Nothing', 188, 'standard', false),
   (13, 'Mastermind', 191, 'standard', false),
-  (14, 'Hits Different', 234, 'extra', true)
+  (14, 'The Great War', 240, 'extra', true),
+  (15, 'Bigger Than The Whole Sky', 218, 'extra', true),
+  (16, 'Paris', 196, 'extra', true),
+  (17, 'High Infidelity', 231, 'extra', true),
+  (18, 'Glitch', 148, 'extra', true),
+  (19, 'Would''ve Could''ve, Should''ve', 260, 'extra', true),
+  (20, 'Dear Reader', 225, 'extra', true),
+  (21, 'Hits Different', 234, 'extra', true)
 ) as v(track_no, title, duration_seconds, edition, is_bonus)
 on conflict (album_id, track_no) do update
 set
