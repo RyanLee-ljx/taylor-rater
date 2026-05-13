@@ -1,0 +1,19 @@
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1200" fill="#070A16"/>
+  <rect x="92" y="92" width="1016" height="1016" rx="18" fill="#111936" stroke="#BFC7D8" stroke-opacity="0.25" stroke-width="2"/>
+  <path d="M92 790C250 710 380 740 522 840C688 956 854 994 1108 854V1108H92V790Z" fill="#2C244A"/>
+  <path d="M92 862C258 790 416 812 562 908C724 1014 898 1018 1108 914V1108H92V862Z" fill="#4B356D" fill-opacity="0.78"/>
+  <circle cx="332" cy="238" r="6" fill="#E7EDF8"/>
+  <circle cx="772" cy="210" r="4" fill="#D6BD7B"/>
+  <circle cx="956" cy="344" r="5" fill="#D7A4B8"/>
+  <circle cx="208" cy="510" r="4" fill="#E7EDF8"/>
+  <circle cx="650" cy="482" r="5" fill="#BFC7D8"/>
+  <circle cx="1008" cy="620" r="3" fill="#E7EDF8"/>
+  <path d="M600 262L621 338L697 360L621 382L600 458L579 382L503 360L579 338L600 262Z" fill="#E7EDF8"/>
+  <path d="M828 476L840 520L884 532L840 544L828 588L816 544L772 532L816 520L828 476Z" fill="#D6BD7B"/>
+  <path d="M388 618L398 654L434 664L398 674L388 710L378 674L342 664L378 654L388 618Z" fill="#D7A4B8"/>
+  <text x="146" y="184" fill="#E7EDF8" font-family="Georgia, serif" font-size="94" letter-spacing="0">Midnights</text>
+  <text x="150" y="250" fill="#BFC7D8" font-family="Inter, Arial, sans-serif" font-size="32" letter-spacing="6">TAYLOR RATER</text>
+  <text x="150" y="1030" fill="#E7EDF8" font-family="Georgia, serif" font-size="58" letter-spacing="0">14 tracks</text>
+  <text x="150" y="1084" fill="#BFC7D8" font-family="Inter, Arial, sans-serif" font-size="28" letter-spacing="4">INCLUDING HITS DIFFERENT</text>
+</svg>

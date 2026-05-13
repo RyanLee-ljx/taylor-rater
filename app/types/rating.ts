@@ -1,0 +1,43 @@
+export interface Track {
+  id: string
+  albumSlug: string
+  trackNo: number
+  title: string
+  edition: 'standard' | 'extra'
+  isBonus: boolean
+  duration?: string
+  mood: string
+}
+
+export interface RatingDraft {
+  trackId: string
+  score: number
+  comment: string
+  touched: boolean
+  updatedAt?: string
+}
+
+export interface CurrentUser {
+  id: string
+  nickname: string
+  avatarColor: string
+  createdAt: string
+}
+
+export interface Review {
+  id: string
+  trackId: string
+  nickname: string
+  avatarColor: string
+  score: number
+  comment: string
+  submittedAt: string
+  isCurrentUser?: boolean
+}
+
+export interface LeaderboardRow extends Track {
+  avgScore: number
+  ratingCount: number
+  position: number
+  label: '仙品' | '✨ 仙乐' | null
+}
