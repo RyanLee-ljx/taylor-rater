@@ -91,6 +91,8 @@
 
 <script setup lang="ts">
 import { BarChart3, Loader2, RotateCcw, Send } from 'lucide-vue-next'
+import RatingProgress from '~/components/rating/RatingProgress.vue'
+import TrackRatingCard from '~/components/rating/TrackRatingCard.vue'
 import { MIDNIGHTS_TRACKS as tracks } from '~/lib/constants'
 import type { RatingDraft } from '~/types/rating'
 

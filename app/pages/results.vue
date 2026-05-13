@@ -58,6 +58,8 @@
 
 <script setup lang="ts">
 import { PenLine } from 'lucide-vue-next'
+import Leaderboard from '~/components/dashboard/Leaderboard.vue'
+import ReviewWall from '~/components/dashboard/ReviewWall.vue'
 
 const { leaderboard, loading, status, loadLeaderboard, getReviewsForTrack } = useLeaderboard()
 const selectedTrackId = ref('')

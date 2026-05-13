@@ -39,4 +39,5 @@
 
 <script setup lang="ts">
 import { Sparkles } from 'lucide-vue-next'
+import StarfieldBackground from '~/components/layout/StarfieldBackground.vue'
 </script>
