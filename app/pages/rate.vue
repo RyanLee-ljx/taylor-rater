@@ -2,20 +2,29 @@
   <div class="space-y-6">
     <section class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
       <div>
-        <p class="text-sm text-aurora-gold">Midnights</p>
-        <h1 class="mt-1 font-display text-4xl leading-tight text-white sm:text-5xl">逐首打分</h1>
+        <p class="text-sm text-aurora-gold">{{ selectedAlbum ? selectedAlbum.shortTitle : 'Albums' }}</p>
+        <h1 class="mt-1 font-display text-4xl leading-tight text-white sm:text-5xl">
+          {{ selectedAlbum ? `${selectedAlbum.title} 逐首打分` : '选择专辑打分' }}
+        </h1>
         <p class="mt-3 max-w-2xl text-sm leading-6 text-silver">
-          每首歌滑动一次分数即可计入进度。短评可以很短，留下第一反应也可以。
+          {{ selectedAlbum ? '每首歌滑动一次分数即可计入进度。短评可以很短，留下第一反应也可以。' : '每张专辑都有独立的评分草稿、提交记录和共享榜单。' }}
         </p>
       </div>
 
-      <NuxtLink class="focus-ring inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/8 px-4 py-3 text-sm text-white transition hover:bg-white/12" to="/results">
+      <NuxtLink
+        class="focus-ring inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/8 px-4 py-3 text-sm text-white transition hover:bg-white/12"
+        :to="selectedAlbum ? { path: '/results', query: { album: selectedAlbum.slug } } : '/results'"
+      >
         <BarChart3 class="size-4" />
         查看榜单
       </NuxtLink>
     </section>
 
-    <section v-if="!user" class="glass-panel rounded-lg p-4 sm:p-5">
+    <section v-if="!selectedAlbum" class="space-y-4">
+      <AlbumSelector :albums="albums" action="rate" />
+    </section>
+
+    <section v-else-if="!user" class="glass-panel rounded-lg p-4 sm:p-5">
       <h2 class="font-display text-2xl text-white">先留下昵称</h2>
       <form class="mt-4 flex flex-col gap-3 sm:flex-row" @submit.prevent="createUser">
         <input
@@ -36,6 +45,23 @@
     </section>
 
     <template v-else>
+      <section class="glass-panel grid gap-4 rounded-lg p-4 sm:grid-cols-[120px_1fr] sm:p-5">
+        <img
+          class="aspect-square w-full rounded-md object-cover sm:w-[120px]"
+          :src="coverSrc"
+          :alt="`${selectedAlbum.title} cover`"
+        >
+        <div class="flex min-w-0 flex-col justify-center">
+          <p class="text-sm text-aurora-gold">{{ selectedAlbum.artist }}</p>
+          <h2 class="mt-1 break-words font-display text-3xl leading-tight text-white">
+            {{ selectedAlbum.title }}
+          </h2>
+          <p class="mt-2 text-sm leading-6 text-silver">
+            {{ tracks.length }} tracks · {{ selectedAlbum.description }}
+          </p>
+        </div>
+      </section>
+
       <section
         class="rounded-lg border px-4 py-3 text-sm"
         :class="status.mode === 'error' ? 'border-aurora-rose/30 bg-aurora-rose/10 text-aurora-rose' : 'border-white/10 bg-white/8 text-silver'"
@@ -58,7 +84,7 @@
       <div class="sticky bottom-4 z-20">
         <div class="glass-panel flex flex-col gap-3 rounded-lg p-3 sm:flex-row sm:items-center sm:justify-between">
           <div class="text-sm text-silver">
-            <p class="font-medium text-white">{{ user.nickname }} 的评分单</p>
+            <p class="font-medium text-white">{{ user.nickname }} 的 {{ selectedAlbum.shortTitle }} 评分单</p>
             <p v-if="canSubmit">已完成所有曲目，可以提交。</p>
             <p v-else>还差 {{ tracks.length - completedCount }} 首。</p>
           </div>
@@ -91,10 +117,22 @@
 
 <script setup lang="ts">
 import { BarChart3, Loader2, RotateCcw, Send } from 'lucide-vue-next'
+import AlbumSelector from '~/components/album/AlbumSelector.vue'
 import RatingProgress from '~/components/rating/RatingProgress.vue'
 import TrackRatingCard from '~/components/rating/TrackRatingCard.vue'
-import { MIDNIGHTS_TRACKS as tracks } from '~/lib/constants'
+import { ALBUMS as albums, DEFAULT_ALBUM_SLUG, findAlbumBySlug, getAlbumTracks } from '~/lib/constants'
 import type { RatingDraft } from '~/types/rating'
+
+const route = useRoute()
+const config = useRuntimeConfig()
+const routeAlbumSlug = computed(() => {
+  const value = Array.isArray(route.query.album) ? route.query.album[0] : route.query.album
+  return typeof value === 'string' ? value : null
+})
+const selectedAlbum = computed(() => findAlbumBySlug(routeAlbumSlug.value))
+const activeAlbumSlug = computed(() => selectedAlbum.value?.slug || DEFAULT_ALBUM_SLUG)
+const tracks = computed(() => getAlbumTracks(activeAlbumSlug.value))
+const coverSrc = computed(() => assetSrc(selectedAlbum.value?.coverImage || '/images/midnights-cover.jpg'))
 
 const { user, saveUser, loadUser } = useCurrentUser()
 const {
@@ -107,22 +145,38 @@ const {
   loadRatings,
   replaceRatings,
   markSubmitted
-} = useRatings()
+} = useRatings(activeAlbumSlug)
 const { status, loading: remoteLoading, syncUser, loadUserRatings, submitRemoteRatings } = useRemoteRatings()
 const nickname = ref('')
 
+function assetSrc(path: string) {
+  const baseURL = config.app.baseURL || '/'
+  return `${baseURL.replace(/\/$/, '')}/${path.replace(/^\//, '')}`
+}
+
 onMounted(async () => {
   loadUser()
-  loadRatings()
+  loadRatings(activeAlbumSlug.value)
   nickname.value = user.value?.nickname || ''
-
-  if (user.value?.isRemote) {
-    const remoteDrafts = await loadUserRatings(user.value)
-    if (remoteDrafts) {
-      replaceRatings(remoteDrafts)
-    }
-  }
+  await hydrateRemoteRatings()
 })
+
+watch(activeAlbumSlug, async (nextSlug) => {
+  loadRatings(nextSlug)
+  await hydrateRemoteRatings()
+})
+
+async function hydrateRemoteRatings() {
+  if (!user.value || !selectedAlbum.value) {
+    return
+  }
+
+  const syncedUser = await syncUser(user.value.nickname, selectedAlbum.value.slug)
+  const remoteDrafts = await loadUserRatings(syncedUser, selectedAlbum.value.slug)
+  if (remoteDrafts) {
+    replaceRatings(remoteDrafts)
+  }
+}
 
 async function createUser() {
   if (!nickname.value.trim()) {
@@ -130,7 +184,15 @@ async function createUser() {
   }
 
   try {
-    await syncUser(nickname.value)
+    const nextUser = selectedAlbum.value
+      ? await syncUser(nickname.value, selectedAlbum.value.slug)
+      : saveUser(nickname.value)
+    if (selectedAlbum.value) {
+      const remoteDrafts = await loadUserRatings(nextUser, selectedAlbum.value.slug)
+      if (remoteDrafts) {
+        replaceRatings(remoteDrafts)
+      }
+    }
   } catch {
     saveUser(nickname.value)
   }
@@ -141,22 +203,18 @@ function updateTrackRating(trackId: string, nextRating: RatingDraft) {
 }
 
 async function submit() {
-  if (!user.value || !canSubmit.value) {
+  if (!user.value || !canSubmit.value || !selectedAlbum.value) {
     return
   }
 
-  let currentUser = user.value
-  if (!currentUser.isRemote) {
-    currentUser = await syncUser(currentUser.nickname)
-  }
-
-  const result = await submitRemoteRatings(currentUser, drafts.value)
+  const currentUser = await syncUser(user.value.nickname, selectedAlbum.value.slug)
+  const result = await submitRemoteRatings(currentUser, drafts.value, selectedAlbum.value.slug)
   if (result.ok && result.submittedAt) {
     markSubmitted(result.submittedAt)
   } else {
     submitRatings(currentUser)
   }
 
-  await navigateTo('/results')
+  await navigateTo({ path: '/results', query: { album: selectedAlbum.value.slug } })
 }
 </script>

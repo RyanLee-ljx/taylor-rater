@@ -1,9 +1,10 @@
-import { MIDNIGHTS_TRACKS, STORAGE_KEYS } from '~/lib/constants'
+import { DEFAULT_ALBUM_SLUG, getAlbumTracks, getRatingStorageKeys, normalizeAlbumSlug } from '~/lib/constants'
 import type { CurrentUser, RatingDraft } from '~/types/rating'
 import { roundToOne } from '~/lib/utils'
+import type { ComputedRef, Ref } from 'vue'
 
-function createInitialDrafts() {
-  return MIDNIGHTS_TRACKS.reduce<Record<string, RatingDraft>>((acc, track) => {
+function createInitialDrafts(albumSlug: string) {
+  return getAlbumTracks(albumSlug).reduce<Record<string, RatingDraft>>((acc, track) => {
     acc[track.id] = {
       trackId: track.id,
       score: 0,
@@ -14,105 +15,190 @@ function createInitialDrafts() {
   }, {})
 }
 
-export function useRatings() {
-  const drafts = useState<Record<string, RatingDraft>>('midnights-rating-drafts', createInitialDrafts)
-  const submittedAt = useState<string | null>('midnights-submitted-at', () => null)
-  const ready = useState('midnights-ratings-ready', () => false)
+export function useRatings(albumSlugInput: Ref<string> | ComputedRef<string> | string = DEFAULT_ALBUM_SLUG) {
+  const albumSlug = computed(() =>
+    normalizeAlbumSlug(typeof albumSlugInput === 'string' ? albumSlugInput : albumSlugInput.value)
+  )
+  const draftsByAlbum = useState<Record<string, Record<string, RatingDraft>>>('rating-drafts-by-album', () => ({}))
+  const submittedAtByAlbum = useState<Record<string, string | null>>('rating-submitted-at-by-album', () => ({}))
+  const readyByAlbum = useState<Record<string, boolean>>('ratings-ready-by-album', () => ({}))
 
-  function persist() {
+  function ensureAlbumState(slug = albumSlug.value) {
+    const normalizedSlug = normalizeAlbumSlug(slug)
+
+    if (!draftsByAlbum.value[normalizedSlug]) {
+      draftsByAlbum.value = {
+        ...draftsByAlbum.value,
+        [normalizedSlug]: createInitialDrafts(normalizedSlug)
+      }
+    }
+
+    if (!(normalizedSlug in submittedAtByAlbum.value)) {
+      submittedAtByAlbum.value = {
+        ...submittedAtByAlbum.value,
+        [normalizedSlug]: null
+      }
+    }
+  }
+
+  function persist(slug = albumSlug.value) {
     if (!import.meta.client) {
       return
     }
 
-    localStorage.setItem(STORAGE_KEYS.midnightsDrafts, JSON.stringify(drafts.value))
-    if (submittedAt.value) {
-      localStorage.setItem(STORAGE_KEYS.midnightsSubmittedAt, submittedAt.value)
+    const normalizedSlug = normalizeAlbumSlug(slug)
+    ensureAlbumState(normalizedSlug)
+
+    const storageKeys = getRatingStorageKeys(normalizedSlug)
+    localStorage.setItem(storageKeys.drafts, JSON.stringify(draftsByAlbum.value[normalizedSlug]))
+
+    const submittedAt = submittedAtByAlbum.value[normalizedSlug]
+    if (submittedAt) {
+      localStorage.setItem(storageKeys.submittedAt, submittedAt)
     } else {
-      localStorage.removeItem(STORAGE_KEYS.midnightsSubmittedAt)
+      localStorage.removeItem(storageKeys.submittedAt)
     }
   }
 
-  function loadRatings() {
-    if (!import.meta.client || ready.value) {
+  function loadRatings(slug = albumSlug.value) {
+    if (!import.meta.client) {
       return
     }
 
-    const rawDrafts = localStorage.getItem(STORAGE_KEYS.midnightsDrafts)
+    const normalizedSlug = normalizeAlbumSlug(slug)
+    if (readyByAlbum.value[normalizedSlug]) {
+      return
+    }
+
+    ensureAlbumState(normalizedSlug)
+
+    const storageKeys = getRatingStorageKeys(normalizedSlug)
+    const rawDrafts = localStorage.getItem(storageKeys.drafts)
     if (rawDrafts) {
       try {
         const parsed = JSON.parse(rawDrafts) as Record<string, RatingDraft>
-        drafts.value = {
-          ...createInitialDrafts(),
-          ...parsed
+        draftsByAlbum.value = {
+          ...draftsByAlbum.value,
+          [normalizedSlug]: {
+            ...createInitialDrafts(normalizedSlug),
+            ...parsed
+          }
         }
       } catch {
-        localStorage.removeItem(STORAGE_KEYS.midnightsDrafts)
+        localStorage.removeItem(storageKeys.drafts)
       }
     }
 
-    submittedAt.value = localStorage.getItem(STORAGE_KEYS.midnightsSubmittedAt)
-    ready.value = true
+    submittedAtByAlbum.value = {
+      ...submittedAtByAlbum.value,
+      [normalizedSlug]: localStorage.getItem(storageKeys.submittedAt)
+    }
+    readyByAlbum.value = {
+      ...readyByAlbum.value,
+      [normalizedSlug]: true
+    }
   }
 
   function updateRating(trackId: string, patch: Partial<RatingDraft>) {
-    const current = drafts.value[trackId] || {
+    const slug = albumSlug.value
+    ensureAlbumState(slug)
+
+    const albumDrafts = draftsByAlbum.value[slug]
+    const current = albumDrafts[trackId] || {
       trackId,
       score: 0,
       comment: '',
       touched: false
     }
 
-    drafts.value = {
-      ...drafts.value,
-      [trackId]: {
-        ...current,
-        ...patch,
-        score: typeof patch.score === 'number' ? roundToOne(patch.score) : current.score,
-        touched: patch.touched ?? current.touched,
-        updatedAt: new Date().toISOString()
+    draftsByAlbum.value = {
+      ...draftsByAlbum.value,
+      [slug]: {
+        ...albumDrafts,
+        [trackId]: {
+          ...current,
+          ...patch,
+          score: typeof patch.score === 'number' ? roundToOne(patch.score) : current.score,
+          touched: patch.touched ?? current.touched,
+          updatedAt: new Date().toISOString()
+        }
       }
     }
 
-    persist()
+    persist(slug)
   }
 
   function submitRatings(_user: CurrentUser) {
-    submittedAt.value = new Date().toISOString()
-    persist()
+    const slug = albumSlug.value
+    submittedAtByAlbum.value = {
+      ...submittedAtByAlbum.value,
+      [slug]: new Date().toISOString()
+    }
+    persist(slug)
   }
 
   function replaceRatings(nextDrafts: Record<string, RatingDraft>, nextSubmittedAt?: string | null) {
-    drafts.value = {
-      ...createInitialDrafts(),
-      ...nextDrafts
+    const slug = albumSlug.value
+    draftsByAlbum.value = {
+      ...draftsByAlbum.value,
+      [slug]: {
+        ...createInitialDrafts(slug),
+        ...nextDrafts
+      }
     }
 
     if (nextSubmittedAt !== undefined) {
-      submittedAt.value = nextSubmittedAt
+      submittedAtByAlbum.value = {
+        ...submittedAtByAlbum.value,
+        [slug]: nextSubmittedAt
+      }
     }
 
-    persist()
+    persist(slug)
   }
 
   function markSubmitted(value = new Date().toISOString()) {
-    submittedAt.value = value
-    persist()
+    const slug = albumSlug.value
+    submittedAtByAlbum.value = {
+      ...submittedAtByAlbum.value,
+      [slug]: value
+    }
+    persist(slug)
   }
 
   function resetRatings() {
-    drafts.value = createInitialDrafts()
-    submittedAt.value = null
-    persist()
+    const slug = albumSlug.value
+    draftsByAlbum.value = {
+      ...draftsByAlbum.value,
+      [slug]: createInitialDrafts(slug)
+    }
+    submittedAtByAlbum.value = {
+      ...submittedAtByAlbum.value,
+      [slug]: null
+    }
+    persist(slug)
   }
 
+  const drafts = computed(() => {
+    ensureAlbumState(albumSlug.value)
+    return draftsByAlbum.value[albumSlug.value]
+  })
+  const submittedAt = computed(() => submittedAtByAlbum.value[albumSlug.value] || null)
+  const ready = computed(() => Boolean(readyByAlbum.value[albumSlug.value]))
   const completedCount = computed(() =>
-    MIDNIGHTS_TRACKS.filter((track) => drafts.value[track.id]?.touched).length
+    getAlbumTracks(albumSlug.value).filter((track) => drafts.value[track.id]?.touched).length
   )
+  const completionRatio = computed(() => {
+    const trackCount = getAlbumTracks(albumSlug.value).length
+    return trackCount === 0 ? 0 : completedCount.value / trackCount
+  })
+  const canSubmit = computed(() => completedCount.value === getAlbumTracks(albumSlug.value).length)
 
-  const completionRatio = computed(() => completedCount.value / MIDNIGHTS_TRACKS.length)
-  const canSubmit = computed(() => completedCount.value === MIDNIGHTS_TRACKS.length)
+  onMounted(() => loadRatings())
 
-  onMounted(loadRatings)
+  watch(albumSlug, (nextSlug) => {
+    loadRatings(nextSlug)
+  })
 
   return {
     drafts,

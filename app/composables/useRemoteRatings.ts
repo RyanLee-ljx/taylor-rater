@@ -1,7 +1,7 @@
-import { MIDNIGHTS_TRACKS } from '~/lib/constants'
+import { DEFAULT_ALBUM_SLUG, getAlbumBySlug, getAlbumTracks, normalizeAlbumSlug } from '~/lib/constants'
 import { useAppSupabase } from '~/lib/supabase'
 import { pickAvatarColor, roundToOne } from '~/lib/utils'
-import type { CurrentUser, DataStatus, LeaderboardRow, RatingDraft, Review, Track } from '~/types/rating'
+import type { CurrentUser, DataStatus, LeaderboardRow, RatingDraft, RemoteUserProfile, Review, Track } from '~/types/rating'
 
 interface RemoteAlbum {
   id: string
@@ -47,6 +47,7 @@ interface RemoteReviewRow {
 
 interface RemoteCatalog {
   album: RemoteAlbum
+  albumSlug: string
   tracks: Track[]
 }
 
@@ -65,19 +66,20 @@ function secondsToDuration(value: number | null) {
   return `${minutes}:${seconds}`
 }
 
-function mergeRemoteTrack(row: RemoteTrackRow): Track {
-  const local = MIDNIGHTS_TRACKS.find(
+function mergeRemoteTrack(row: RemoteTrackRow, albumSlug: string): Track {
+  const local = getAlbumTracks(albumSlug).find(
     (track) => track.trackNo === row.track_no || track.title.toLowerCase() === row.title.toLowerCase()
   )
 
   return {
     ...(local || {
       id: row.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
-      albumSlug: 'midnights',
-      mood: row.is_bonus ? '额外曲目' : 'Midnights track'
+      albumSlug,
+      mood: row.is_bonus ? '额外曲目' : 'Taylor track'
     }),
     databaseId: row.id,
     albumId: row.album_id,
+    albumSlug,
     trackNo: row.track_no,
     title: row.title,
     duration: local?.duration || secondsToDuration(row.duration_seconds),
@@ -90,14 +92,37 @@ function localTrackFromRemoteId(remoteTrackId: string, catalog: RemoteCatalog | 
   return catalog?.tracks.find((track) => track.databaseId === remoteTrackId)
 }
 
+function getRemoteProfile(remoteUser: CurrentUser, albumSlug: string, albumId?: string): RemoteUserProfile | null {
+  const slug = normalizeAlbumSlug(albumSlug)
+  const profile = remoteUser.remoteProfiles?.[slug]
+  if (profile) {
+    return profile
+  }
+
+  if (remoteUser.isRemote && remoteUser.albumId && remoteUser.authUid && (!albumId || remoteUser.albumId === albumId)) {
+    return {
+      id: remoteUser.id,
+      albumId: remoteUser.albumId,
+      authUid: remoteUser.authUid,
+      createdAt: remoteUser.createdAt
+    }
+  }
+
+  return null
+}
+
 export function useRemoteRatings() {
-  const catalog = useState<RemoteCatalog | null>('remote-midnights-catalog', () => null)
+  const catalogs = useState<Record<string, RemoteCatalog>>('remote-album-catalogs', () => ({}))
+  const catalog = computed(() => catalogs.value[DEFAULT_ALBUM_SLUG] || null)
   const status = useState<DataStatus>('remote-ratings-status', () => fallbackStatus)
   const loading = useState('remote-ratings-loading', () => false)
 
-  async function loadCatalog() {
-    if (catalog.value) {
-      return catalog.value
+  async function loadCatalog(albumSlugInput = DEFAULT_ALBUM_SLUG) {
+    const albumSlug = normalizeAlbumSlug(albumSlugInput)
+    const albumMeta = getAlbumBySlug(albumSlug)
+
+    if (catalogs.value[albumSlug]) {
+      return catalogs.value[albumSlug]
     }
 
     const supabase = useAppSupabase()
@@ -109,13 +134,13 @@ export function useRemoteRatings() {
     const { data: album, error: albumError } = await supabase
       .from('albums')
       .select('id, slug, title')
-      .eq('slug', 'midnights')
+      .eq('slug', albumSlug)
       .maybeSingle<RemoteAlbum>()
 
     if (albumError || !album) {
       status.value = {
         mode: 'error',
-        message: 'Supabase 已连接，但没有找到 Midnights 专辑数据。请先运行 supabase/seed.sql。'
+        message: `Supabase 已连接，但没有找到 ${albumMeta.shortTitle} 专辑数据。请先运行 supabase/seed.sql。`
       }
       return null
     }
@@ -127,34 +152,40 @@ export function useRemoteRatings() {
       .order('track_no', { ascending: true })
       .returns<RemoteTrackRow[]>()
 
+    const localTracks = getAlbumTracks(albumSlug)
     if (tracksError || !trackRows?.length) {
       status.value = {
         mode: 'error',
-        message: `Supabase 已连接，但曲目表为空。请确认 tracks 表已插入 ${MIDNIGHTS_TRACKS.length} 首 Midnights 曲目。`
+        message: `Supabase 已连接，但 ${albumMeta.shortTitle} 曲目表为空。请确认 tracks 表已插入 ${localTracks.length} 首曲目。`
       }
       return null
     }
 
     const remoteTitles = new Set(trackRows.map((track) => track.title.toLowerCase()))
-    const missingTracks = MIDNIGHTS_TRACKS.filter((track) => !remoteTitles.has(track.title.toLowerCase()))
+    const missingTracks = localTracks.filter((track) => !remoteTitles.has(track.title.toLowerCase()))
     if (missingTracks.length > 0) {
       status.value = {
         mode: 'error',
-        message: `Supabase 曲目表还缺 ${missingTracks.length} 首：${missingTracks.map((track) => track.title).join('、')}。请重新执行 supabase/seed.sql。`
+        message: `Supabase 的 ${albumMeta.shortTitle} 曲目表还缺 ${missingTracks.length} 首：${missingTracks.map((track) => track.title).join('、')}。请重新执行 supabase/seed.sql。`
       }
       return null
     }
 
-    catalog.value = {
+    const nextCatalog = {
       album,
-      tracks: trackRows.map(mergeRemoteTrack)
+      albumSlug,
+      tracks: trackRows.map((row) => mergeRemoteTrack(row, albumSlug))
+    }
+    catalogs.value = {
+      ...catalogs.value,
+      [albumSlug]: nextCatalog
     }
     status.value = {
       mode: 'remote',
-      message: '已连接 Supabase：评分会同步到共享榜单。'
+      message: `已连接 Supabase：${albumMeta.shortTitle} 评分会同步到共享榜单。`
     }
 
-    return catalog.value
+    return nextCatalog
   }
 
   async function ensureSession() {
@@ -181,11 +212,12 @@ export function useRemoteRatings() {
     return data.user
   }
 
-  async function syncUser(nickname: string) {
+  async function syncUser(nickname: string, albumSlugInput = DEFAULT_ALBUM_SLUG) {
+    const albumSlug = normalizeAlbumSlug(albumSlugInput)
     const { saveUser } = useCurrentUser()
     const cleanNickname = nickname.trim().slice(0, 24)
     const localUser = saveUser(cleanNickname)
-    const remoteCatalog = await loadCatalog()
+    const remoteCatalog = await loadCatalog(albumSlug)
     const authUser = await ensureSession()
     const supabase = useAppSupabase()
 
@@ -217,20 +249,33 @@ export function useRemoteRatings() {
     }
 
     return saveUser(data.nickname, {
-      id: data.id,
       albumId: data.album_id,
       authUid: data.auth_uid,
       avatarColor: data.avatar_color || avatarColor,
-      createdAt: data.created_at,
-      isRemote: true
+      isRemote: true,
+      remoteProfiles: {
+        [albumSlug]: {
+          id: data.id,
+          albumId: data.album_id,
+          authUid: data.auth_uid,
+          createdAt: data.created_at,
+          submittedAt: data.submitted_at
+        }
+      }
     })
   }
 
-  async function loadUserRatings(remoteUser: CurrentUser) {
-    const remoteCatalog = await loadCatalog()
+  async function loadUserRatings(remoteUser: CurrentUser, albumSlugInput = DEFAULT_ALBUM_SLUG) {
+    const albumSlug = normalizeAlbumSlug(albumSlugInput)
+    const remoteCatalog = await loadCatalog(albumSlug)
     const supabase = useAppSupabase()
 
-    if (!remoteCatalog || !supabase || !remoteUser.isRemote) {
+    if (!remoteCatalog || !supabase) {
+      return null
+    }
+
+    const profile = getRemoteProfile(remoteUser, albumSlug, remoteCatalog.album.id)
+    if (!profile) {
       return null
     }
 
@@ -238,7 +283,7 @@ export function useRemoteRatings() {
       .from('ratings')
       .select('track_id, score, comment, updated_at')
       .eq('album_id', remoteCatalog.album.id)
-      .eq('user_id', remoteUser.id)
+      .eq('user_id', profile.id)
 
     if (error) {
       status.value = {
@@ -268,17 +313,30 @@ export function useRemoteRatings() {
     return nextDrafts
   }
 
-  async function submitRemoteRatings(remoteUser: CurrentUser, drafts: Record<string, RatingDraft>) {
+  async function submitRemoteRatings(
+    remoteUser: CurrentUser,
+    drafts: Record<string, RatingDraft>,
+    albumSlugInput = DEFAULT_ALBUM_SLUG
+  ) {
+    const albumSlug = normalizeAlbumSlug(albumSlugInput)
     loading.value = true
 
     try {
-      const remoteCatalog = await loadCatalog()
+      const remoteCatalog = await loadCatalog(albumSlug)
       const supabase = useAppSupabase()
 
-      if (!remoteCatalog || !supabase || !remoteUser.isRemote) {
+      if (!remoteCatalog || !supabase) {
         return {
           ok: false,
           message: fallbackStatus.message
+        }
+      }
+
+      const profile = getRemoteProfile(remoteUser, albumSlug, remoteCatalog.album.id)
+      if (!profile) {
+        return {
+          ok: false,
+          message: '尚未为这张专辑同步远端用户，已改用本地提交。'
         }
       }
 
@@ -287,7 +345,7 @@ export function useRemoteRatings() {
 
         return {
           album_id: remoteCatalog.album.id,
-          user_id: remoteUser.id,
+          user_id: profile.id,
           track_id: track.databaseId,
           score: roundToOne(draft?.score ?? 0),
           comment: draft?.comment?.trim() || null
@@ -313,7 +371,7 @@ export function useRemoteRatings() {
       const { error: userError } = await supabase
         .from('users')
         .update({ submitted_at: submittedAt, updated_at: submittedAt })
-        .eq('id', remoteUser.id)
+        .eq('id', profile.id)
 
       if (userError) {
         status.value = {
@@ -323,7 +381,7 @@ export function useRemoteRatings() {
       } else {
         status.value = {
           mode: 'remote',
-          message: '评分已同步到 Supabase 共享榜单。'
+          message: `${getAlbumBySlug(albumSlug).shortTitle} 评分已同步到 Supabase 共享榜单。`
         }
       }
 
@@ -337,8 +395,9 @@ export function useRemoteRatings() {
     }
   }
 
-  async function fetchRemoteLeaderboard() {
-    const remoteCatalog = await loadCatalog()
+  async function fetchRemoteLeaderboard(albumSlugInput = DEFAULT_ALBUM_SLUG) {
+    const albumSlug = normalizeAlbumSlug(albumSlugInput)
+    const remoteCatalog = await loadCatalog(albumSlug)
     const supabase = useAppSupabase()
 
     if (!remoteCatalog || !supabase) {
@@ -372,15 +431,18 @@ export function useRemoteRatings() {
     }
 
     const leaderboard: LeaderboardRow[] = rows.map((row: any) => {
-      const track = localTrackFromRemoteId(row.track_id, remoteCatalog) || mergeRemoteTrack({
-        id: row.track_id,
-        album_id: row.album_id,
-        track_no: row.track_no,
-        title: row.title,
-        duration_seconds: null,
-        edition: row.edition,
-        is_bonus: row.is_bonus
-      })
+      const track = localTrackFromRemoteId(row.track_id, remoteCatalog) || mergeRemoteTrack(
+        {
+          id: row.track_id,
+          album_id: row.album_id,
+          track_no: row.track_no,
+          title: row.title,
+          duration_seconds: null,
+          edition: row.edition,
+          is_bonus: row.is_bonus
+        },
+        albumSlug
+      )
       const position = Number(row.position)
       const ratingCount = Number(row.rating_count || 0)
       const label: LeaderboardRow['label'] =
@@ -423,7 +485,7 @@ export function useRemoteRatings() {
 
     status.value = {
       mode: 'remote',
-      message: '榜单来自 Supabase 实时数据。'
+      message: `${getAlbumBySlug(albumSlug).shortTitle} 榜单来自 Supabase 实时数据。`
     }
 
     return {
@@ -434,6 +496,7 @@ export function useRemoteRatings() {
 
   return {
     catalog,
+    catalogs,
     status,
     loading,
     loadCatalog,

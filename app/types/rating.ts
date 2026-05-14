@@ -1,3 +1,13 @@
+export interface Album {
+  slug: string
+  title: string
+  shortTitle: string
+  artist: string
+  releaseDate: string
+  coverImage: string
+  description: string
+}
+
 export interface Track {
   id: string
   databaseId?: string
@@ -27,6 +37,15 @@ export interface CurrentUser {
   avatarColor: string
   createdAt: string
   isRemote?: boolean
+  remoteProfiles?: Record<string, RemoteUserProfile>
+}
+
+export interface RemoteUserProfile {
+  id: string
+  albumId: string
+  authUid: string
+  createdAt: string
+  submittedAt?: string | null
 }
 
 export interface Review {

@@ -10,11 +10,11 @@ export default defineNuxtConfig({
       htmlAttrs: {
         lang: 'zh-CN'
       },
-      title: 'Taylor Rater | Midnights',
+      title: 'Taylor Rater | Album Rating',
       meta: [
         {
           name: 'description',
-          content: '和朋友一起为 Taylor Swift 的 Midnights 曲目打分、短评并生成排行榜。'
+          content: '和朋友一起为 Taylor Swift 专辑曲目打分、短评并生成独立排行榜。'
         },
         {
           name: 'theme-color',
@@ -35,6 +35,10 @@ export default defineNuxtConfig({
     prerender: {
       routes: ['/', '/rate', '/results']
     }
+  },
+
+  experimental: {
+    appManifest: true
   },
 
   typescript: {

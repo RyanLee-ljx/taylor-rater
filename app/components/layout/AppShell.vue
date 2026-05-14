@@ -10,7 +10,7 @@
           </span>
           <span class="leading-tight">
             <span class="block font-display text-lg text-white">Taylor Rater</span>
-            <span class="block text-xs text-silver">Midnights 好友评分局</span>
+            <span class="block text-xs text-silver">Taylor album 评分局</span>
           </span>
         </NuxtLink>
 

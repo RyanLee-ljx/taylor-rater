@@ -1,14 +1,18 @@
-import { MIDNIGHTS_TRACKS } from '~/lib/constants'
+import { DEFAULT_ALBUM_SLUG, getAlbumTracks, normalizeAlbumSlug } from '~/lib/constants'
 import { roundToTwo } from '~/lib/utils'
 import type { LeaderboardRow, Review } from '~/types/rating'
+import type { ComputedRef, Ref } from 'vue'
 
-export function useLeaderboard() {
+export function useLeaderboard(albumSlugInput: Ref<string> | ComputedRef<string> | string = DEFAULT_ALBUM_SLUG) {
+  const albumSlug = computed(() =>
+    normalizeAlbumSlug(typeof albumSlugInput === 'string' ? albumSlugInput : albumSlugInput.value)
+  )
   const { user } = useCurrentUser()
-  const { drafts, submittedAt } = useRatings()
+  const { drafts, submittedAt } = useRatings(albumSlug)
   const { status, fetchRemoteLeaderboard } = useRemoteRatings()
-  const remoteRows = useState<LeaderboardRow[]>('remote-leaderboard-rows', () => [])
-  const remoteReviews = useState<Record<string, Review[]>>('remote-review-wall', () => ({}))
-  const remoteLoaded = useState('remote-leaderboard-loaded', () => false)
+  const remoteRowsByAlbum = useState<Record<string, LeaderboardRow[]>>('remote-leaderboard-rows-by-album', () => ({}))
+  const remoteReviewsByAlbum = useState<Record<string, Record<string, Review[]>>>('remote-review-wall-by-album', () => ({}))
+  const remoteLoadedByAlbum = useState<Record<string, boolean>>('remote-leaderboard-loaded-by-album', () => ({}))
   const loading = useState('remote-leaderboard-loading', () => false)
 
   const currentUserReviews = computed<Review[]>(() => {
@@ -16,11 +20,11 @@ export function useLeaderboard() {
       return []
     }
 
-    return MIDNIGHTS_TRACKS.map((track) => {
+    return getAlbumTracks(albumSlug.value).map((track) => {
       const draft = drafts.value[track.id]
 
       return {
-        id: `current-${track.id}`,
+        id: `current-${albumSlug.value}-${track.id}`,
         trackId: track.id,
         nickname: user.value?.nickname || '你',
         avatarColor: user.value?.avatarColor || '#d7a4b8',
@@ -35,7 +39,7 @@ export function useLeaderboard() {
   const localReviews = computed<Review[]>(() => currentUserReviews.value)
 
   const localLeaderboard = computed<LeaderboardRow[]>(() => {
-    const ranked = MIDNIGHTS_TRACKS.map((track) => {
+    const ranked = getAlbumTracks(albumSlug.value).map((track) => {
       const trackReviews = localReviews.value.filter((review) => review.trackId === track.id)
       const avgScore =
         trackReviews.length > 0
@@ -81,24 +85,24 @@ export function useLeaderboard() {
   })
 
   const leaderboard = computed<LeaderboardRow[]>(() => {
-    if (remoteLoaded.value && status.value.mode === 'remote') {
-      return remoteRows.value
+    if (remoteLoadedByAlbum.value[albumSlug.value] && status.value.mode === 'remote') {
+      return remoteRowsByAlbum.value[albumSlug.value] || []
     }
 
     return localLeaderboard.value
   })
 
   const reviews = computed<Review[]>(() => {
-    if (remoteLoaded.value && status.value.mode === 'remote') {
-      return Object.values(remoteReviews.value).flat()
+    if (remoteLoadedByAlbum.value[albumSlug.value] && status.value.mode === 'remote') {
+      return Object.values(remoteReviewsByAlbum.value[albumSlug.value] || {}).flat()
     }
 
     return localReviews.value
   })
 
   function getReviewsForTrack(trackId: string) {
-    if (remoteLoaded.value && status.value.mode === 'remote') {
-      return [...(remoteReviews.value[trackId] || [])].sort(
+    if (remoteLoadedByAlbum.value[albumSlug.value] && status.value.mode === 'remote') {
+      return [...(remoteReviewsByAlbum.value[albumSlug.value]?.[trackId] || [])].sort(
         (a, b) => b.score - a.score || new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
       )
     }
@@ -108,17 +112,30 @@ export function useLeaderboard() {
       .sort((a, b) => b.score - a.score || new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime())
   }
 
-  async function loadLeaderboard() {
+  async function loadLeaderboard(slugInput = albumSlug.value) {
+    const slug = normalizeAlbumSlug(slugInput)
     loading.value = true
 
     try {
-      const remote = await fetchRemoteLeaderboard()
+      const remote = await fetchRemoteLeaderboard(slug)
       if (remote) {
-        remoteRows.value = remote.leaderboard
-        remoteReviews.value = remote.reviews
-        remoteLoaded.value = true
+        remoteRowsByAlbum.value = {
+          ...remoteRowsByAlbum.value,
+          [slug]: remote.leaderboard
+        }
+        remoteReviewsByAlbum.value = {
+          ...remoteReviewsByAlbum.value,
+          [slug]: remote.reviews
+        }
+        remoteLoadedByAlbum.value = {
+          ...remoteLoadedByAlbum.value,
+          [slug]: true
+        }
       } else {
-        remoteLoaded.value = false
+        remoteLoadedByAlbum.value = {
+          ...remoteLoadedByAlbum.value,
+          [slug]: false
+        }
       }
     } finally {
       loading.value = false
@@ -130,7 +147,7 @@ export function useLeaderboard() {
     leaderboard,
     loading,
     status,
-    remoteLoaded,
+    remoteLoaded: computed(() => Boolean(remoteLoadedByAlbum.value[albumSlug.value])),
     loadLeaderboard,
     getReviewsForTrack
   }

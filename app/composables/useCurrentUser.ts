@@ -46,7 +46,11 @@ export function useCurrentUser() {
       nickname: cleanNickname,
       avatarColor: overrides.avatarColor || user.value?.avatarColor || pickAvatarColor(cleanNickname),
       createdAt: overrides.createdAt || user.value?.createdAt || new Date().toISOString(),
-      isRemote: overrides.isRemote ?? user.value?.isRemote
+      isRemote: overrides.isRemote ?? user.value?.isRemote,
+      remoteProfiles: {
+        ...(user.value?.remoteProfiles || {}),
+        ...(overrides.remoteProfiles || {})
+      }
     }
 
     return persistUser(nextUser)

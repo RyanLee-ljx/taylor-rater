@@ -1,6 +1,6 @@
 # Taylor Rater
 
-Nuxt 3 + Tailwind CSS app for rating Taylor Swift albums with friends. The first album flow is `Midnights`, including the 13 standard tracks, the 3am Tracks, and `Hits Different`.
+Nuxt 3 + Tailwind CSS app for rating Taylor Swift albums with friends. The app now supports independent album flows for `Midnights` and `THE TORTURED POETS DEPARTMENT`, with separate drafts, submissions, leaderboards, and review walls per album.
 
 ## Local Development
 
@@ -9,6 +9,8 @@ npm install
 npm run dev
 npm run typecheck
 ```
+
+Use Node 22 for local development, matching the GitHub Pages workflow.
 
 ## Environment
 
