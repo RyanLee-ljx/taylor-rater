@@ -46,7 +46,7 @@ export const TTPD_THEME: AlbumTheme = {
   panel: 'rgba(35, 30, 25, 0.82)',
   panel2: '#EDECE8',
   border: 'rgba(232, 222, 204, 0.18)',
-  text: '#66625d',
+  text: '#100f0f',
   muted: '#cfc3b4',
   accent: '#d7c3a6',
   accent2: '#8f8173',
