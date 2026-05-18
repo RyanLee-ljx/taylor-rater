@@ -49,7 +49,7 @@
       <textarea
         :id="`${track.id}-comment`"
         class="theme-input focus-ring min-h-24 w-full resize-y rounded-lg border px-3 py-3 text-sm transition"
-        maxlength="280"
+        maxlength="500"
         placeholder="这一首给你的感觉是..."
         :value="rating.comment"
         @input="onCommentInput"
@@ -60,7 +60,7 @@
           已记录
         </span>
         <span v-else>滑动一次即可计入进度</span>
-        <span>{{ rating.comment.length }}/280</span>
+        <span>{{ rating.comment.length }}/500</span>
       </div>
     </div>
   </article>
