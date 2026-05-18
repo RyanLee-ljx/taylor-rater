@@ -1,8 +1,8 @@
 <template>
-  <div class="min-h-dvh">
+  <div class="min-h-dvh" :style="themeVars">
     <StarfieldBackground />
 
-    <header class="sticky top-0 z-30 border-b border-white/10 bg-midnight-950/72 backdrop-blur-xl">
+    <header class="sticky top-0 z-30 border-b border-white/10 bg-[color:var(--album-header)] backdrop-blur-xl">
       <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
         <NuxtLink to="/" class="focus-ring flex items-center gap-3 rounded-md">
           <span class="grid size-9 place-items-center rounded-full border border-white/15 bg-white/8 text-aurora-gold">
@@ -40,4 +40,42 @@
 <script setup lang="ts">
 import { Sparkles } from 'lucide-vue-next'
 import StarfieldBackground from '~/components/layout/StarfieldBackground.vue'
+import { DEFAULT_ALBUM_THEME, findAlbumBySlug } from '~/lib/constants'
+
+const route = useRoute()
+
+const routeAlbumSlug = computed(() => {
+  const value = Array.isArray(route.query.album) ? route.query.album[0] : route.query.album
+  return typeof value === 'string' ? value : null
+})
+
+const activeTheme = computed(() => findAlbumBySlug(routeAlbumSlug.value)?.theme || DEFAULT_ALBUM_THEME)
+
+const themeVars = computed<Record<string, string>>(() => ({
+  '--album-bg': activeTheme.value.bg,
+  '--album-bg-2': activeTheme.value.bg2,
+  '--album-bg-3': activeTheme.value.bg3,
+  '--album-panel': activeTheme.value.panel,
+  '--album-panel-2': activeTheme.value.panel2,
+  '--album-border': activeTheme.value.border,
+  '--album-text': activeTheme.value.text,
+  '--album-muted': activeTheme.value.muted,
+  '--album-accent': activeTheme.value.accent,
+  '--album-accent-2': activeTheme.value.accent2,
+  '--album-selection': activeTheme.value.selection,
+  '--album-header': 'rgba(6, 9, 19, 0.72)'
+}))
+
+const themeStyle = computed(() =>
+  Object.entries(themeVars.value).map(([key, value]) => `${key}:${value}`).join(';')
+)
+
+useHead(() => ({
+  htmlAttrs: {
+    style: themeStyle.value
+  },
+  bodyAttrs: {
+    style: themeStyle.value
+  }
+}))
 </script>

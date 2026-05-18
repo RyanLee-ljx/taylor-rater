@@ -1,6 +1,50 @@
-import type { Album, Review, Track } from '~/types/rating'
+import type { Album, AlbumTheme, Review, Track } from '~/types/rating'
 
 export const DEFAULT_ALBUM_SLUG = 'midnights'
+
+export const MIDNIGHTS_THEME: AlbumTheme = {
+  bg: '#060913',
+  bg2: '#111936',
+  bg3: '#2d244a',
+  panel: 'rgba(17, 25, 54, 0.78)',
+  panel2: 'rgba(28, 24, 52, 0.62)',
+  border: 'rgba(231, 237, 248, 0.14)',
+  text: '#e7edf8',
+  muted: '#bfc7d8',
+  accent: '#d7a4b8',
+  accent2: '#d6bd7b',
+  selection: 'rgba(215, 164, 184, 0.34)'
+}
+
+export const LOVER_THEME: AlbumTheme = {
+  bg: '#24101f',
+  bg2: '#7b315f',
+  bg3: '#e6a6c6',
+  panel: 'rgba(58, 22, 48, 0.78)',
+  panel2: 'rgba(118, 48, 94, 0.56)',
+  border: 'rgba(255, 214, 232, 0.22)',
+  text: '#fff5fb',
+  muted: '#f3c7dc',
+  accent: '#f5a6c8',
+  accent2: '#8fd3e8',
+  selection: 'rgba(245, 166, 200, 0.34)'
+}
+
+export const TTPD_THEME: AlbumTheme = {
+  bg: '#15120f',
+  bg2: '#3c342c',
+  bg3: '#b5aa9a',
+  panel: 'rgba(35, 30, 25, 0.82)',
+  panel2: 'rgba(72, 62, 51, 0.58)',
+  border: 'rgba(232, 222, 204, 0.18)',
+  text: '#f2eadf',
+  muted: '#cfc3b4',
+  accent: '#d7c3a6',
+  accent2: '#8f8173',
+  selection: 'rgba(215, 195, 166, 0.34)'
+}
+
+export const DEFAULT_ALBUM_THEME = MIDNIGHTS_THEME
 
 export const MIDNIGHTS_ALBUM: Album = {
   slug: 'midnights',
@@ -9,6 +53,7 @@ export const MIDNIGHTS_ALBUM: Album = {
   artist: 'Taylor Swift',
   releaseDate: '2022-10-21',
   coverImage: '/images/midnights-cover.jpg',
+  theme: MIDNIGHTS_THEME,
   description:
     '请为午夜打分'
 }
@@ -20,20 +65,21 @@ export const TTPD_ALBUM: Album = {
   artist: 'Taylor Swift',
   releaseDate: '2024-04-19',
   coverImage: '/images/ttpd-cover.jpg',
+  theme: TTPD_THEME,
   description:
     '请为苦难诗社打分'
 }
 
 export const LOVER_ALBUM: Album = {
-    slug: 'lover',
-    title: 'Lover',
-    shortTitle: 'Lover',
-    artist: 'Taylor Swift',
-    releaseDate: '2019-08-23',
-    coverImage: '/images/lover-cover.jpg',
-    description: '请为辣味/恋人打分'
-  }
-
+  slug: 'lover',
+  title: 'Lover',
+  shortTitle: 'Lover',
+  artist: 'Taylor Swift',
+  releaseDate: '2019-08-23',
+  coverImage: '/images/lover-cover.jpg',
+  description: '请为 Lover 打分',
+  theme: LOVER_THEME
+}
 
 export const ALBUMS: Album[] = [MIDNIGHTS_ALBUM, TTPD_ALBUM, LOVER_ALBUM]
 

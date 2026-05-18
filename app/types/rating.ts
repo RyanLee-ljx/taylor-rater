@@ -1,3 +1,17 @@
+export interface AlbumTheme {
+  bg: string
+  bg2: string
+  bg3: string
+  panel: string
+  panel2: string
+  border: string
+  text: string
+  muted: string
+  accent: string
+  accent2: string
+  selection: string
+}
+
 export interface Album {
   slug: string
   title: string
@@ -6,6 +20,7 @@ export interface Album {
   releaseDate: string
   coverImage: string
   description: string
+  theme: AlbumTheme
 }
 
 export interface Track {
