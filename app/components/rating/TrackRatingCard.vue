@@ -60,7 +60,7 @@
           已记录
         </span>
         <span v-else>滑动一次即可计入进度</span>
-        <span>{{ rating.comment.length }}/180</span>
+        <span>{{ rating.comment.length }}/280</span>
       </div>
     </div>
   </article>
