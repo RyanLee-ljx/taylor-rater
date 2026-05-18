@@ -4,7 +4,7 @@
       <div class="order-2 space-y-6 lg:order-1">
         <div class="theme-surface theme-muted inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm">
           <Moon class="theme-accent-2 size-4" />
-          Taylor album rating
+          By Ryan Lee
         </div>
 
         <div>
@@ -13,7 +13,7 @@
             Album Rating
           </h1>
           <p class="theme-muted mt-5 max-w-2xl text-base leading-7 sm:text-lg">
-            选择一张专辑，逐首留下 0.0 到 10.0 分和一句短评；每张专辑都有独立评分单、独立榜单和独立评价墙。
+            选择一张专辑，逐首留下你的评分和想说的话；每张专辑均有独立评分单、独立榜单和独立评价墙。
           </p>
         </div>
 
@@ -37,7 +37,7 @@
             </button>
           </div>
           <p class="theme-muted mt-3 text-xs leading-5">
-            选择具体专辑后，评分会同步到对应专辑的 Supabase 共享榜单；不可用时会保存到本机浏览器。
+            Tips: 选择具体专辑后，评分会同步到对应专辑的 Supabase 共享榜单，可能需要一些加载时间，请耐心等待。
           </p>
         </form>
 
