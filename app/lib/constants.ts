@@ -7,7 +7,7 @@ export const MIDNIGHTS_THEME: AlbumTheme = {
   bg2: '#111936',
   bg3: '#2d244a',
   panel: 'rgba(17, 25, 54, 0.72)',  
-  panel2: '#923b3c',
+  panel2: 'rgba(17, 25, 54, 0.72)',
   border: '#c3987e',
   text: '#ebe9e6',
   muted: '#bfc7d8',
@@ -20,12 +20,14 @@ export const MIDNIGHTS_THEME: AlbumTheme = {
   selection: 'rgba(215, 164, 184, 0.34)'
 }
 
+// #923b3c
+
 export const LOVER_THEME: AlbumTheme = {
   bg: '#fccada',
   bg2: '#f4b1c6',
   bg3: '#f4b1c6',
   panel: '#f1a8bf',
-  panel2: '#d2b3d8',
+  panel2: '#f1a8bf',
   border: '#3f4145',
   text: '#863958',
   muted: 'rgba(82, 79, 79, 0.99)',
@@ -44,7 +46,7 @@ export const TTPD_THEME: AlbumTheme = {
   bg2: '#3c342c',
   bg3: '#b5aa9a',
   panel: 'rgba(35, 30, 25, 0.82)',
-  panel2: '#EDECE8',
+  panel2: 'rgba(35, 30, 25, 0.82), 0.72)',
   border: 'rgba(232, 222, 204, 0.18)',
   text: '#100f0f',
   muted: '#cfc3b4',
