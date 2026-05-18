@@ -31,8 +31,8 @@ export const LOVER_THEME: AlbumTheme = {
   muted: 'rgba(82, 79, 79, 0.99)',
   accent: '#f4e396',
   accent2: '#fbf1c6',
-  header: '#cad0d6#b1c7f6',
-  input: 'rgba(255, 255, 255, 0.42)',
+  header: '#c097c8',
+  input: '#cad0d6#b1c7f6'',
   inputText: '#3f4145',
   placeholder: 'rgba(28, 28, 28, 0.99)',
   selection: 'rgba(246, 144, 208, 0.34)'
