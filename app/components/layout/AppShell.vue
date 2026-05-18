@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-dvh" :style="themeVars">
-    <StarfieldBackground :image-src="loginBackgroundSrc" :show-image="isLoginPage" />
+    <StarfieldBackground :image-src="loginBackgroundSrc" :show-image="usesEntryTheme" />
 
     <header class="sticky top-0 z-30 border-b bg-[color:var(--album-header)] backdrop-blur-xl">
       <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
@@ -40,7 +40,7 @@
 <script setup lang="ts">
 import { Sparkles } from 'lucide-vue-next'
 import StarfieldBackground from '~/components/layout/StarfieldBackground.vue'
-import { DEFAULT_ALBUM_THEME, LOGIN_THEME, findAlbumBySlug } from '~/lib/constants'
+import { LOGIN_THEME, findAlbumBySlug } from '~/lib/constants'
 
 const route = useRoute()
 
@@ -49,20 +49,15 @@ const routeAlbumSlug = computed(() => {
   return typeof value === 'string' ? value : null
 })
 
-const isLoginPage = computed(() => route.path === '/')
-const activeTheme = computed(() => {
-  if (isLoginPage.value) {
-    return LOGIN_THEME
-  }
-
-  return findAlbumBySlug(routeAlbumSlug.value)?.theme || DEFAULT_ALBUM_THEME
-})
+const activeAlbum = computed(() => findAlbumBySlug(routeAlbumSlug.value))
+const usesEntryTheme = computed(() => !activeAlbum.value)
+const activeTheme = computed(() => activeAlbum.value?.theme || LOGIN_THEME)
 const loginBackgroundSrc = usePublicAsset('/images/background.jpg')
 
 const themeVars = computed<Record<string, string>>(() => ({
-  '--album-bg': isLoginPage.value ? 'transparent' : activeTheme.value.bg,
-  '--album-bg-2': isLoginPage.value ? 'transparent' : activeTheme.value.bg2,
-  '--album-bg-3': isLoginPage.value ? 'transparent' : activeTheme.value.bg3,
+  '--album-bg': usesEntryTheme.value ? 'transparent' : activeTheme.value.bg,
+  '--album-bg-2': usesEntryTheme.value ? 'transparent' : activeTheme.value.bg2,
+  '--album-bg-3': usesEntryTheme.value ? 'transparent' : activeTheme.value.bg3,
   '--album-panel': activeTheme.value.panel,
   '--album-panel-2': activeTheme.value.panel2,
   '--album-border': activeTheme.value.border,
