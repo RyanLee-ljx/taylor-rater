@@ -72,6 +72,63 @@ set
 
 insert into public.albums (slug, title, artist, release_date, cover_url, description)
 values (
+  'lover',
+  'Lover',
+  'Taylor Swift',
+  '2019-08-23',
+  '/images/lover-cover.jpg',
+  'Lover track rating with friends.'
+)
+on conflict (slug) do update
+set
+  title = excluded.title,
+  artist = excluded.artist,
+  release_date = excluded.release_date,
+  cover_url = excluded.cover_url,
+  description = excluded.description;
+
+with album as (
+  select id from public.albums where slug = 'lover'
+)
+insert into public.tracks (album_id, track_no, title, duration_seconds, edition, is_bonus)
+select
+  album.id,
+  track_no,
+  title,
+  duration_seconds,
+  edition,
+  is_bonus
+from album,
+(values
+  (1, 'I Forgot That You Existed', 170, 'standard', false),
+  (2, 'Cruel Summer', 178, 'standard', false),
+  (3, 'Lover', 221, 'standard', false),
+  (4, 'The Man', 190, 'standard', false),
+  (5, 'The Archer', 211, 'standard', false),
+  (6, 'I Think He Knows', 173, 'standard', false),
+  (7, 'Miss Americana & The Heartbreak Prince', 234, 'standard', false),
+  (8, 'Paper Rings', 222, 'standard', false),
+  (9, 'Cornelia Street', 287, 'standard', false),
+  (10, 'Death By A Thousand Cuts', 198, 'standard', false),
+  (11, 'London Boy', 190, 'standard', false),
+  (12, 'Soon You''ll Get Better (feat. Dixie Chicks)', 201, 'standard', false),
+  (13, 'False God', 200, 'standard', false),
+  (14, 'You Need To Calm Down', 171, 'standard', false),
+  (15, 'Afterglow', 223, 'standard', false),
+  (16, 'ME! (feat. Brendon Urie of Panic! At The Disco)', 193, 'standard', false),
+  (17, 'It''s Nice To Have A Friend', 150, 'standard', false),
+  (18, 'Daylight', 293, 'standard', false),
+  (19, 'All of the Girls You Loved Before', 221, 'extra', true)
+) as v(track_no, title, duration_seconds, edition, is_bonus)
+on conflict (album_id, track_no) do update
+set
+  title = excluded.title,
+  duration_seconds = excluded.duration_seconds,
+  edition = excluded.edition,
+  is_bonus = excluded.is_bonus;
+
+insert into public.albums (slug, title, artist, release_date, cover_url, description)
+values (
   'the-tortured-poets-department',
   'THE TORTURED POETS DEPARTMENT',
   'Taylor Swift',

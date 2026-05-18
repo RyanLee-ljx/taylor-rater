@@ -10,7 +10,7 @@ export const MIDNIGHTS_ALBUM: Album = {
   releaseDate: '2022-10-21',
   coverImage: '/images/midnights-cover.jpg',
   description:
-    '一场适合深夜好友局的曲目评分：给每首歌留下 0.0 到 10.0 分，以及一句你当下的短评。'
+    '请为午夜打分'
 }
 
 export const TTPD_ALBUM: Album = {
@@ -21,10 +21,21 @@ export const TTPD_ALBUM: Album = {
   releaseDate: '2024-04-19',
   coverImage: '/images/ttpd-cover.jpg',
   description:
-    '把标准版和 The Anthology 一次性纳入评分：31 首曲目各自独立打分，留下你对这本文学档案的第一反应。'
+    '请为苦难诗社打分'
 }
 
-export const ALBUMS: Album[] = [MIDNIGHTS_ALBUM, TTPD_ALBUM]
+export const LOVER_ALBUM: Album = {
+    slug: 'lover',
+    title: 'Lover',
+    shortTitle: 'Lover',
+    artist: 'Taylor Swift',
+    releaseDate: '2019-08-23',
+    coverImage: '/images/lover-cover.jpg',
+    description: '请为辣味/恋人打分'
+  }
+
+
+export const ALBUMS: Album[] = [MIDNIGHTS_ALBUM, TTPD_ALBUM, LOVER_ALBUM]
 
 export const MIDNIGHTS_TRACKS: Track[] = [
   {
@@ -552,9 +563,203 @@ export const TTPD_TRACKS: Track[] = [
   }
 ]
 
+export const LOVER_TRACKS: Track[] = [
+  {
+    id: 'i-forgot-that-you-existed',
+    albumSlug: 'lover',
+    trackNo: 1,
+    title: 'I Forgot That You Existed',
+    edition: 'standard',
+    isBonus: false,
+    duration: '2:50',
+    mood: 'opening reset'
+  },
+  {
+    id: 'cruel-summer',
+    albumSlug: 'lover',
+    trackNo: 2,
+    title: 'Cruel Summer',
+    edition: 'standard',
+    isBonus: false,
+    duration: '2:58',
+    mood: 'fever pop'
+  },
+  {
+    id: 'lover',
+    albumSlug: 'lover',
+    trackNo: 3,
+    title: 'Lover',
+    edition: 'standard',
+    isBonus: false,
+    duration: '3:41',
+    mood: 'wedding glow'
+  },
+  {
+    id: 'the-man',
+    albumSlug: 'lover',
+    trackNo: 4,
+    title: 'The Man',
+    edition: 'standard',
+    isBonus: false,
+    duration: '3:10',
+    mood: 'sharp satire'
+  },
+  {
+    id: 'the-archer',
+    albumSlug: 'lover',
+    trackNo: 5,
+    title: 'The Archer',
+    edition: 'standard',
+    isBonus: false,
+    duration: '3:31',
+    mood: 'anxious confession'
+  },
+  {
+    id: 'i-think-he-knows',
+    albumSlug: 'lover',
+    trackNo: 6,
+    title: 'I Think He Knows',
+    edition: 'standard',
+    isBonus: false,
+    duration: '2:53',
+    mood: 'crush rush'
+  },
+  {
+    id: 'miss-americana-and-the-heartbreak-prince',
+    albumSlug: 'lover',
+    trackNo: 7,
+    title: 'Miss Americana & The Heartbreak Prince',
+    edition: 'standard',
+    isBonus: false,
+    duration: '3:54',
+    mood: 'dark pageant'
+  },
+  {
+    id: 'paper-rings',
+    albumSlug: 'lover',
+    trackNo: 8,
+    title: 'Paper Rings',
+    edition: 'standard',
+    isBonus: false,
+    duration: '3:42',
+    mood: 'bright sprint'
+  },
+  {
+    id: 'cornelia-street',
+    albumSlug: 'lover',
+    trackNo: 9,
+    title: 'Cornelia Street',
+    edition: 'standard',
+    isBonus: false,
+    duration: '4:47',
+    mood: 'city memory'
+  },
+  {
+    id: 'death-by-a-thousand-cuts',
+    albumSlug: 'lover',
+    trackNo: 10,
+    title: 'Death By A Thousand Cuts',
+    edition: 'standard',
+    isBonus: false,
+    duration: '3:18',
+    mood: 'heartbreak rush'
+  },
+  {
+    id: 'london-boy',
+    albumSlug: 'lover',
+    trackNo: 11,
+    title: 'London Boy',
+    edition: 'standard',
+    isBonus: false,
+    duration: '3:10',
+    mood: 'city postcard'
+  },
+  {
+    id: 'soon-youll-get-better',
+    albumSlug: 'lover',
+    trackNo: 12,
+    title: "Soon You'll Get Better (feat. Dixie Chicks)",
+    edition: 'standard',
+    isBonus: false,
+    duration: '3:21',
+    mood: 'quiet prayer'
+  },
+  {
+    id: 'false-god',
+    albumSlug: 'lover',
+    trackNo: 13,
+    title: 'False God',
+    edition: 'standard',
+    isBonus: false,
+    duration: '3:20',
+    mood: 'late sax'
+  },
+  {
+    id: 'you-need-to-calm-down',
+    albumSlug: 'lover',
+    trackNo: 14,
+    title: 'You Need To Calm Down',
+    edition: 'standard',
+    isBonus: false,
+    duration: '2:51',
+    mood: 'neon clapback'
+  },
+  {
+    id: 'afterglow',
+    albumSlug: 'lover',
+    trackNo: 15,
+    title: 'Afterglow',
+    edition: 'standard',
+    isBonus: false,
+    duration: '3:43',
+    mood: 'soft apology'
+  },
+  {
+    id: 'me',
+    albumSlug: 'lover',
+    trackNo: 16,
+    title: 'ME! (feat. Brendon Urie of Panic! At The Disco)',
+    edition: 'standard',
+    isBonus: false,
+    duration: '3:13',
+    mood: 'confetti pop'
+  },
+  {
+    id: 'its-nice-to-have-a-friend',
+    albumSlug: 'lover',
+    trackNo: 17,
+    title: "It's Nice To Have A Friend",
+    edition: 'standard',
+    isBonus: false,
+    duration: '2:30',
+    mood: 'small vignette'
+  },
+  {
+    id: 'daylight',
+    albumSlug: 'lover',
+    trackNo: 18,
+    title: 'Daylight',
+    edition: 'standard',
+    isBonus: false,
+    duration: '4:53',
+    mood: 'golden close'
+  },
+  {
+    id: 'all-of-the-girls-you-loved-before',
+    albumSlug: 'lover',
+    trackNo: 19,
+    title: 'All of the Girls You Loved Before',
+    edition: 'extra',
+    isBonus: true,
+    duration: '3:41',
+    mood: 'bonus glow'
+  }
+]
+
 export const ALBUM_TRACKS: Record<string, Track[]> = {
   [MIDNIGHTS_ALBUM.slug]: MIDNIGHTS_TRACKS,
-  [TTPD_ALBUM.slug]: TTPD_TRACKS
+  [TTPD_ALBUM.slug]: TTPD_TRACKS,
+  [LOVER_ALBUM.slug]: LOVER_TRACKS
 }
 
 export function findAlbumBySlug(slug?: string | null) {
