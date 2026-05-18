@@ -3,44 +3,48 @@ import type { Album, AlbumTheme, Review, Track } from '~/types/rating'
 export const DEFAULT_ALBUM_SLUG = 'midnights'
 
 export const MIDNIGHTS_THEME: AlbumTheme = {
-  bg: '#060913',
+  bg: '#301d2a',
   bg2: '#111936',
   bg3: '#2d244a',
-  panel: 'rgba(17, 25, 54, 0.78)',
-  panel2: 'rgba(28, 24, 52, 0.62)',
-  border: 'rgba(231, 237, 248, 0.14)',
-  text: '#e7edf8',
+  panel: '#5e363a',
+  panel2: '#c3987e',
+  border: '#923b3d',
+  text: '#ebe9e6',
   muted: '#bfc7d8',
-  accent: '#d7a4b8',
-  accent2: '#d6bd7b',
+  accent: '#8590a1',
+  accent2: '#12110c',
+  header: 'rgba(17, 25, 54, 0.72)',
   selection: 'rgba(215, 164, 184, 0.34)'
 }
 
 export const LOVER_THEME: AlbumTheme = {
-  bg: '#24101f',
-  bg2: '#7b315f',
-  bg3: '#e6a6c6',
-  panel: 'rgba(58, 22, 48, 0.78)',
-  panel2: 'rgba(118, 48, 94, 0.56)',
-  border: 'rgba(255, 214, 232, 0.22)',
-  text: '#fff5fb',
-  muted: '#f3c7dc',
-  accent: '#f5a6c8',
-  accent2: '#8fd3e8',
-  selection: 'rgba(245, 166, 200, 0.34)'
+  bg: '#f1a8bf',
+  bg2: '#f4b1c6',
+  bg3: '#f9c1d3',
+  panel: '#d2b3d8',
+  panel2: '#f4c1bd',
+  border: '#f0d3f5f3',
+  text: '#3f4145',
+  muted: '#bfc7d8',
+  accent: '#fbf1c6',
+  accent2: '#cad0d6',
+  header: '#76abd9',
+  selection: 'rgba(246, 144, 208, 0.34)'
 }
 
+
 export const TTPD_THEME: AlbumTheme = {
-  bg: '#15120f',
+  bg: '#EDECE8',
   bg2: '#3c342c',
   bg3: '#b5aa9a',
   panel: 'rgba(35, 30, 25, 0.82)',
   panel2: 'rgba(72, 62, 51, 0.58)',
   border: 'rgba(232, 222, 204, 0.18)',
-  text: '#f2eadf',
+  text: '#66625d',
   muted: '#cfc3b4',
   accent: '#d7c3a6',
   accent2: '#8f8173',
+  header: 'rgba(35, 30, 25, 0.76)',
   selection: 'rgba(215, 195, 166, 0.34)'
 }
 
@@ -77,7 +81,7 @@ export const LOVER_ALBUM: Album = {
   artist: 'Taylor Swift',
   releaseDate: '2019-08-23',
   coverImage: '/images/lover-cover.jpg',
-  description: '请为 Lover 打分',
+  description: '请为辣味/恋人打分',
   theme: LOVER_THEME
 }
 

@@ -1,10 +1,25 @@
 <template>
   <div aria-hidden="true" class="album-background pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+    <div
+      v-if="showImage"
+      class="login-background-image absolute inset-0"
+      :style="{ backgroundImage: `url(${imageSrc})` }"
+    />
     <div class="absolute inset-0 stars-layer stars-layer-one" />
     <div class="absolute inset-0 stars-layer stars-layer-two" />
     <div class="absolute inset-0 album-vignette" />
   </div>
 </template>
+
+<script setup lang="ts">
+withDefaults(defineProps<{
+  imageSrc?: string
+  showImage?: boolean
+}>(), {
+  imageSrc: '',
+  showImage: false
+})
+</script>
 
 <style scoped>
 .album-background {
@@ -17,6 +32,13 @@
       var(--album-bg-2, #111936) 45%,
       var(--album-bg-3, #2d244a) 100%
     );
+}
+
+.login-background-image {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0.5;
 }
 
 .album-vignette {

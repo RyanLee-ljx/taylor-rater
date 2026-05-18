@@ -9,6 +9,7 @@ export interface AlbumTheme {
   muted: string
   accent: string
   accent2: string
+  header: string
   selection: string
 }
 
