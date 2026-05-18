@@ -6,29 +6,29 @@ export const MIDNIGHTS_THEME: AlbumTheme = {
   bg: '#301d2a',
   bg2: '#111936',
   bg3: '#2d244a',
-  panel: '#5e363a',
-  panel2: '#c3987e',
-  border: '#923b3d',
+  panel: 'rgba(17, 25, 54, 0.72)',  
+  panel2: '#923b3c',
+  border: '#c3987e',
   text: '#ebe9e6',
   muted: '#bfc7d8',
   accent: '#8590a1',
   accent2: '#12110c',
-  header: 'rgba(17, 25, 54, 0.72)',
+  header: '#5e363a',
   selection: 'rgba(215, 164, 184, 0.34)'
 }
 
 export const LOVER_THEME: AlbumTheme = {
-  bg: '#d2b3d8',
+  bg: '#f9c1d3',
   bg2: '#f4b1c6',
-  bg3: '#f9c1d3',
+  bg3: '#f4b1c6',
   panel: '#f1a8bf',
-  panel2: '#f4c1bd',
+  panel2: '#d2b3d8',
   border: '#3f4145',
-  text: '#f0d3f5f3',
+  text: '#76abd9',
   muted: '#bfc7d8',
-  accent: '#fbf1c6',
+  accent: '#f0d3f5f3',
   accent2: '#cad0d6',
-  header: '#76abd9',
+  header: '#fbf1c6',
   selection: 'rgba(246, 144, 208, 0.34)'
 }
 
