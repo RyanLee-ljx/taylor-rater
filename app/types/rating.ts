@@ -10,6 +10,9 @@ export interface AlbumTheme {
   accent: string
   accent2: string
   header: string
+  input: string
+  inputText: string
+  placeholder: string
   selection: string
 }
 

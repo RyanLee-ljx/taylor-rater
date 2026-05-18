@@ -2,13 +2,13 @@
   <section class="glass-panel rounded-lg p-4 sm:p-5">
     <div class="flex items-start justify-between gap-4">
       <div>
-        <p class="text-sm text-silver">好友评价墙</p>
-        <h2 class="mt-1 font-display text-2xl text-white">{{ trackTitle }}</h2>
+        <p class="theme-muted text-sm">好友评价墙</p>
+        <h2 class="theme-text mt-1 font-display text-2xl">{{ trackTitle }}</h2>
       </div>
-      <MessageSquare class="mt-1 size-5 text-aurora-gold" />
+      <MessageSquare class="theme-accent-2 mt-1 size-5" />
     </div>
 
-    <div v-if="reviews.length === 0" class="mt-5 rounded-lg border border-white/10 bg-white/[0.06] p-4 text-sm text-silver">
+    <div v-if="reviews.length === 0" class="theme-surface theme-muted mt-5 rounded-lg border p-4 text-sm">
       这首歌暂时还没有短评。
     </div>
 
@@ -16,7 +16,7 @@
       <article
         v-for="review in reviews"
         :key="review.id"
-        class="rounded-lg border border-white/10 bg-white/[0.06] p-3"
+        class="theme-surface rounded-lg border p-3"
       >
         <div class="flex items-start justify-between gap-3">
           <div class="flex min-w-0 items-center gap-3">
@@ -27,17 +27,17 @@
               {{ review.nickname.slice(0, 1).toUpperCase() }}
             </span>
             <div class="min-w-0">
-              <p class="truncate font-medium text-white">
+              <p class="theme-text truncate font-medium">
                 {{ review.nickname }}
-                <span v-if="review.isCurrentUser" class="ml-1 text-xs text-aurora-gold">你</span>
+                <span v-if="review.isCurrentUser" class="theme-accent-2 ml-1 text-xs">你</span>
               </p>
-              <p class="text-xs text-silver">{{ formatDate(review.submittedAt) }}</p>
+              <p class="theme-muted text-xs">{{ formatDate(review.submittedAt) }}</p>
             </div>
           </div>
-          <p class="shrink-0 font-display text-2xl text-white">{{ review.score.toFixed(1) }}</p>
+          <p class="theme-text shrink-0 font-display text-2xl">{{ review.score.toFixed(1) }}</p>
         </div>
 
-        <p class="mt-3 text-sm leading-6 text-starlight/90">{{ review.comment }}</p>
+        <p class="theme-text mt-3 text-sm leading-6">{{ review.comment }}</p>
       </article>
     </div>
   </section>

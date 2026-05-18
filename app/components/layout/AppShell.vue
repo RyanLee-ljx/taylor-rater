@@ -71,7 +71,10 @@ const themeVars = computed<Record<string, string>>(() => ({
   '--album-accent': activeTheme.value.accent,
   '--album-accent-2': activeTheme.value.accent2,
   '--album-selection': activeTheme.value.selection,
-  '--album-header': activeTheme.value.header
+  '--album-header': activeTheme.value.header,
+  '--album-input': activeTheme.value.input,
+  '--album-input-text': activeTheme.value.inputText,
+  '--album-placeholder': activeTheme.value.placeholder
 }))
 
 const themeStyle = computed(() =>

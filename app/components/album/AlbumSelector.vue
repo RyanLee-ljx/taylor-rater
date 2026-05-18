@@ -14,18 +14,18 @@
 
         <div class="flex min-w-0 flex-col">
           <div class="min-w-0">
-            <p class="text-sm text-aurora-gold">{{ album.artist }}</p>
-            <h2 class="mt-1 break-words font-display text-2xl leading-tight text-white">
+            <p class="theme-accent-2 text-sm">{{ album.artist }}</p>
+            <h2 class="theme-text mt-1 break-words font-display text-2xl leading-tight">
               {{ album.title }}
             </h2>
-            <p class="mt-2 text-sm text-silver">{{ formatDate(album.releaseDate) }}</p>
+            <p class="theme-muted mt-2 text-sm">{{ formatDate(album.releaseDate) }}</p>
           </div>
 
-          <div class="mt-4 flex flex-wrap gap-2 text-xs text-silver">
-            <span class="rounded-full border border-white/10 bg-white/8 px-2 py-1">
+          <div class="theme-muted mt-4 flex flex-wrap gap-2 text-xs">
+            <span class="theme-surface rounded-full border px-2 py-1">
               {{ trackCount(album.slug) }} tracks
             </span>
-            <span class="rounded-full border border-white/10 bg-white/8 px-2 py-1">
+            <span class="theme-surface rounded-full border px-2 py-1">
               独立榜单
             </span>
           </div>

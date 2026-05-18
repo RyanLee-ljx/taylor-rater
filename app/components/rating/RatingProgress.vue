@@ -2,18 +2,21 @@
   <section class="glass-panel rounded-lg p-4">
     <div class="flex items-center justify-between gap-4">
       <div>
-        <p class="text-sm text-silver">评分进度</p>
-        <p class="mt-1 font-display text-2xl text-white">{{ completed }} / {{ total }}</p>
+        <p class="theme-muted text-sm">评分进度</p>
+        <p class="theme-text mt-1 font-display text-2xl">{{ completed }} / {{ total }}</p>
       </div>
-      <div class="text-right text-sm text-silver">
+      <div class="theme-muted text-right text-sm">
         <p>{{ percentage }}%</p>
         <p>完成后可提交榜单</p>
       </div>
     </div>
-    <div class="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
+    <div class="theme-surface mt-4 h-2 overflow-hidden rounded-full">
       <div
-        class="h-full rounded-full bg-gradient-to-r from-aurora-rose via-starlight to-aurora-gold transition-all duration-300"
-        :style="{ width: `${percentage}%` }"
+        class="h-full rounded-full transition-all duration-300"
+        :style="{
+          width: `${percentage}%`,
+          background: 'linear-gradient(90deg, var(--album-accent), var(--album-accent-2))'
+        }"
       />
     </div>
   </section>

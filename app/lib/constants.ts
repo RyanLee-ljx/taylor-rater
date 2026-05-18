@@ -14,21 +14,27 @@ export const MIDNIGHTS_THEME: AlbumTheme = {
   accent: '#8590a1',
   accent2: '#12110c',
   header: '#5e363a',
+  input: 'rgba(48, 29, 42, 0.58)',
+  inputText: '#ebe9e6',
+  placeholder: 'rgba(235, 233, 230, 0.52)',
   selection: 'rgba(215, 164, 184, 0.34)'
 }
 
 export const LOVER_THEME: AlbumTheme = {
-  bg: '#f9c1d3',
+  bg: '#fccada',
   bg2: '#f4b1c6',
   bg3: '#f4b1c6',
   panel: '#f1a8bf',
   panel2: '#d2b3d8',
   border: '#3f4145',
   text: '#76abd9',
-  muted: '#bfc7d8',
-  accent: '#f0d3f5f3',
-  accent2: '#cad0d6',
-  header: '#fbf1c6',
+  muted: 'rgba(82, 79, 79, 0.99)',
+  accent: '#f4e396',
+  accent2: '#fbf1c6',
+  header: '#cad0d6#b1c7f6',
+  input: 'rgba(255, 255, 255, 0.42)',
+  inputText: '#3f4145',
+  placeholder: 'rgba(28, 28, 28, 0.99)',
   selection: 'rgba(246, 144, 208, 0.34)'
 }
 
@@ -45,6 +51,9 @@ export const TTPD_THEME: AlbumTheme = {
   accent: '#d7c3a6',
   accent2: '#8f8173',
   header: 'rgba(35, 30, 25, 0.76)',
+  input: 'rgba(237, 236, 232, 0.72)',
+  inputText: '#3c342c',
+  placeholder: 'rgba(60, 52, 44, 0.48)',
   selection: 'rgba(215, 195, 166, 0.34)'
 }
 
@@ -60,6 +69,9 @@ export const LOGIN_THEME: AlbumTheme = {
   accent: '#f78fa7',
   accent2: '#ffe89a',
   header: 'transparent',
+  input: 'rgba(255, 255, 255, 0.18)',
+  inputText: '#fff8e8',
+  placeholder: 'rgba(255, 248, 232, 0.58)',
   selection: 'rgba(247, 143, 167, 0.34)'
 }
 

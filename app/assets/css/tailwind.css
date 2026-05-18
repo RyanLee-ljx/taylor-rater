@@ -52,6 +52,45 @@ input[type='range'] {
   backdrop-filter: blur(18px);
 }
 
+.theme-text {
+  color: var(--album-text, #e7edf8);
+}
+
+.theme-muted {
+  color: var(--album-muted, #bfc7d8);
+}
+
+.theme-accent {
+  color: var(--album-accent, #d7a4b8);
+}
+
+.theme-accent-2 {
+  color: var(--album-accent-2, #d6bd7b);
+}
+
+.theme-border {
+  border-color: var(--album-border, rgba(231, 237, 248, 0.14));
+}
+
+.theme-surface {
+  border-color: var(--album-border, rgba(231, 237, 248, 0.14));
+  background: color-mix(in srgb, var(--album-panel, rgba(17, 25, 54, 0.78)) 42%, transparent);
+}
+
+.theme-input {
+  border-color: var(--album-border, rgba(231, 237, 248, 0.14));
+  background: var(--album-input, rgba(6, 9, 19, 0.58));
+  color: var(--album-input-text, #e7edf8);
+}
+
+.theme-input::placeholder {
+  color: var(--album-placeholder, rgba(191, 199, 216, 0.45));
+}
+
+.theme-input:focus {
+  border-color: color-mix(in srgb, var(--album-accent, #d7a4b8) 58%, white);
+}
+
 .focus-ring {
   outline: 2px solid transparent;
   outline-offset: 2px;

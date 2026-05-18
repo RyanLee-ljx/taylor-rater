@@ -2,11 +2,11 @@
   <div class="space-y-6">
     <section class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
       <div>
-        <p class="text-sm text-aurora-gold">{{ selectedAlbum ? selectedAlbum.shortTitle : 'Leaderboards' }}</p>
-        <h1 class="mt-1 font-display text-4xl leading-tight text-white sm:text-5xl">
+        <p class="theme-accent-2 text-sm">{{ selectedAlbum ? selectedAlbum.shortTitle : 'Leaderboards' }}</p>
+        <h1 class="theme-text mt-1 font-display text-4xl leading-tight sm:text-5xl">
           {{ selectedAlbum ? `${selectedAlbum.title} 榜单` : '选择专辑榜单' }}
         </h1>
-        <p class="mt-3 max-w-2xl text-sm leading-6 text-silver">
+        <p class="theme-muted mt-3 max-w-2xl text-sm leading-6">
           {{ selectedAlbum ? '排名按真实提交的平均分降序生成；第一名为仙品，第二到第五名为仙乐。' : '每张专辑都有独立的平均分排行、仙品/仙乐和好友评价墙。' }}
         </p>
       </div>
@@ -32,11 +32,11 @@
           :alt="`${selectedAlbum.title} cover`"
         >
         <div class="flex min-w-0 flex-col justify-center">
-          <p class="text-sm text-aurora-gold">{{ selectedAlbum.artist }}</p>
-          <h2 class="mt-1 break-words font-display text-3xl leading-tight text-white">
+          <p class="theme-accent-2 text-sm">{{ selectedAlbum.artist }}</p>
+          <h2 class="theme-text mt-1 break-words font-display text-3xl leading-tight">
             {{ selectedAlbum.title }}
           </h2>
-          <p class="mt-2 text-sm leading-6 text-silver">
+          <p class="theme-muted mt-2 text-sm leading-6">
             {{ tracks.length }} tracks · {{ selectedAlbum.description }}
           </p>
         </div>
@@ -44,7 +44,7 @@
 
       <section
         class="rounded-lg border px-4 py-3 text-sm"
-        :class="status.mode === 'error' ? 'border-aurora-rose/30 bg-aurora-rose/10 text-aurora-rose' : 'border-white/10 bg-white/8 text-silver'"
+        :class="status.mode === 'error' ? 'border-aurora-rose/30 bg-aurora-rose/10 text-aurora-rose' : 'theme-surface theme-muted'"
       >
         <span v-if="loading">正在读取榜单...</span>
         <span v-else>{{ status.message }}</span>
@@ -52,22 +52,22 @@
 
       <section class="grid gap-4 sm:grid-cols-3">
         <div class="glass-panel rounded-lg p-4">
-          <p class="text-sm text-silver">当前仙品</p>
-          <p class="mt-2 truncate font-display text-2xl text-white">{{ topRatedTrack?.title || '暂无' }}</p>
+          <p class="theme-muted text-sm">当前仙品</p>
+          <p class="theme-text mt-2 truncate font-display text-2xl">{{ topRatedTrack?.title || '暂无' }}</p>
         </div>
         <div class="glass-panel rounded-lg p-4">
-          <p class="text-sm text-silver">平均分</p>
-          <p class="mt-2 font-display text-2xl text-white">{{ topRatedTrack?.avgScore.toFixed(2) || '-' }}</p>
+          <p class="theme-muted text-sm">平均分</p>
+          <p class="theme-text mt-2 font-display text-2xl">{{ topRatedTrack?.avgScore.toFixed(2) || '-' }}</p>
         </div>
         <div class="glass-panel rounded-lg p-4">
-          <p class="text-sm text-silver">参与样本</p>
-          <p class="mt-2 font-display text-2xl text-white">{{ totalParticipants }} 人</p>
+          <p class="theme-muted text-sm">参与样本</p>
+          <p class="theme-text mt-2 font-display text-2xl">{{ totalParticipants }} 人</p>
         </div>
       </section>
 
       <section
         v-if="!loading && !hasRatings"
-        class="glass-panel rounded-lg p-5 text-sm leading-6 text-silver"
+        class="theme-muted glass-panel rounded-lg p-5 text-sm leading-6"
       >
         当前还没有任何已提交评分。先去打分页提交一次，榜单会立刻用你的真实数据生成。
       </section>
