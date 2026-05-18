@@ -59,7 +59,7 @@ export const LOGIN_THEME: AlbumTheme = {
   muted: '#d9e8f4',
   accent: '#f78fa7',
   accent2: '#ffe89a',
-  header: 'rgba(18, 58, 92, 0.64)',
+  header: 'transparent',
   selection: 'rgba(247, 143, 167, 0.34)'
 }
 
