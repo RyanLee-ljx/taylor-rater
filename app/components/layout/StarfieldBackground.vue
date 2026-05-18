@@ -1,5 +1,9 @@
 <template>
-  <div aria-hidden="true" class="album-background pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+  <div
+    aria-hidden="true"
+    class="album-background pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+    :class="{ 'login-background-only': showImage }"
+  >
     <div
       v-if="showImage"
       class="login-background-image absolute inset-0"
@@ -34,11 +38,20 @@ withDefaults(defineProps<{
     );
 }
 
+.login-background-only {
+  background: transparent;
+}
+
 .login-background-image {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
   opacity: 0.5;
+}
+
+.login-background-only .stars-layer,
+.login-background-only .album-vignette {
+  display: none;
 }
 
 .album-vignette {

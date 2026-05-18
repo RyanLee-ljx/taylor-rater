@@ -60,9 +60,9 @@ const activeTheme = computed(() => {
 const loginBackgroundSrc = usePublicAsset('/images/background.jpg')
 
 const themeVars = computed<Record<string, string>>(() => ({
-  '--album-bg': activeTheme.value.bg,
-  '--album-bg-2': activeTheme.value.bg2,
-  '--album-bg-3': activeTheme.value.bg3,
+  '--album-bg': isLoginPage.value ? 'transparent' : activeTheme.value.bg,
+  '--album-bg-2': isLoginPage.value ? 'transparent' : activeTheme.value.bg2,
+  '--album-bg-3': isLoginPage.value ? 'transparent' : activeTheme.value.bg3,
   '--album-panel': activeTheme.value.panel,
   '--album-panel-2': activeTheme.value.panel2,
   '--album-border': activeTheme.value.border,
