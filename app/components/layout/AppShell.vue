@@ -40,7 +40,7 @@
 <script setup lang="ts">
 import { Sparkles } from 'lucide-vue-next'
 import StarfieldBackground from '~/components/layout/StarfieldBackground.vue'
-import { DEFAULT_ALBUM_THEME, findAlbumBySlug } from '~/lib/constants'
+import { DEFAULT_ALBUM_THEME, LOGIN_THEME, findAlbumBySlug } from '~/lib/constants'
 
 const route = useRoute()
 
@@ -49,8 +49,14 @@ const routeAlbumSlug = computed(() => {
   return typeof value === 'string' ? value : null
 })
 
-const activeTheme = computed(() => findAlbumBySlug(routeAlbumSlug.value)?.theme || DEFAULT_ALBUM_THEME)
 const isLoginPage = computed(() => route.path === '/')
+const activeTheme = computed(() => {
+  if (isLoginPage.value) {
+    return LOGIN_THEME
+  }
+
+  return findAlbumBySlug(routeAlbumSlug.value)?.theme || DEFAULT_ALBUM_THEME
+})
 const loginBackgroundSrc = usePublicAsset('/images/background.jpg')
 
 const themeVars = computed<Record<string, string>>(() => ({
