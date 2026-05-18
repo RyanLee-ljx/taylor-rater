@@ -49,7 +49,7 @@
       <textarea
         :id="`${track.id}-comment`"
         class="theme-input focus-ring min-h-24 w-full resize-y rounded-lg border px-3 py-3 text-sm transition"
-        maxlength="180"
+        maxlength="280"
         placeholder="这一首给你的感觉是..."
         :value="rating.comment"
         @input="onCommentInput"
